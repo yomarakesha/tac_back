@@ -4,7 +4,7 @@ from flask_admin.contrib.sqla import ModelView
 from flask_admin.form import ImageUploadField
 from flask import redirect, url_for
 from wtforms import FileField, TextAreaField
-from flask_babel import gettext as _
+from flask_babel import gettext as _, lazy_gettext as _l, get_locale
 
 from .models import (
     db, Product, ProductCategory, Brand, News, Banner,
@@ -16,6 +16,10 @@ from .models import (
 # Secure access for logged-in users
 # -----------------------------
 class SecureModelView(ModelView):
+    # Подключаем общий CSS для всех страниц модели
+    extra_css = ["/static/css/admin.css"]
+    # Глобальные скрипты (переключатель темы и быстрый поиск)
+    extra_js = ["/static/js/admin-theme.js"]
     def is_accessible(self):
         from flask_login import current_user
         return current_user.is_authenticated
@@ -72,6 +76,21 @@ EDIT_TEMPLATE = "admin/edit.html"
 # Product Admin
 # -----------------------------
 class ProductAdmin(SecureModelView):
+    # Локализованные колонки списка
+    column_list = (
+        "name_i18n", "slug", "brand_i18n", "category_i18n", "volume_or_weight",
+    )
+    column_labels = {
+        "name_i18n": _l("Products"),  # Отображаемое имя товара
+        "brand_i18n": _l("Brands"),
+        "category_i18n": _l("Categories"),
+        "volume_or_weight": _l("Products"),
+    }
+    column_formatters = {
+        "name_i18n": lambda v, c, m, p: _get_i18n_attr(m, "name"),
+        "brand_i18n": lambda v, c, m, p: (_get_i18n_attr(m.brand, "name") if getattr(m, "brand", None) else ""),
+        "category_i18n": lambda v, c, m, p: (_get_i18n_attr(m.category, "name") if getattr(m, "category", None) else ""),
+    }
     form_columns = [
         "name_en", "name_ru", "name_tk",
         "slug",
@@ -107,6 +126,15 @@ class ProductAdmin(SecureModelView):
 # Brand Admin
 # -----------------------------
 class BrandAdmin(SecureModelView):
+    column_list = ("name_i18n", "slug", "company_i18n")
+    column_labels = {
+        "name_i18n": _l("Brands"),
+        "company_i18n": _l("Users"),  # просто метка; при желании добавить переводы Company
+    }
+    column_formatters = {
+        "name_i18n": lambda v, c, m, p: _get_i18n_attr(m, "name"),
+        "company_i18n": lambda v, c, m, p: (_get_i18n_attr(m.company, "name") if getattr(m, "company", None) else ""),
+    }
     form_columns = [
         "name_en", "name_ru", "name_tk",
         "slug",
@@ -132,6 +160,15 @@ class BrandAdmin(SecureModelView):
 # News Admin
 # -----------------------------
 class NewsAdmin(SecureModelView):
+    column_list = ("title_i18n", "slug", "publication_date", "company_i18n")
+    column_labels = {
+        "title_i18n": _l("News"),
+        "company_i18n": _l("Users"),
+    }
+    column_formatters = {
+        "title_i18n": lambda v, c, m, p: _get_i18n_attr(m, "title"),
+        "company_i18n": lambda v, c, m, p: (_get_i18n_attr(m.company, "name") if getattr(m, "company", None) else ""),
+    }
     form_columns = [
         "title_en", "title_ru", "title_tk",
         "slug",
@@ -157,6 +194,15 @@ class NewsAdmin(SecureModelView):
 # Certificate Admin
 # -----------------------------
 class CertificateAdmin(SecureModelView):
+    column_list = ("name_i18n", "company_i18n")
+    column_labels = {
+        "name_i18n": _l("Certificates") if False else _l("Products"),  # заглушка перевода
+        "company_i18n": _l("Users"),
+    }
+    column_formatters = {
+        "name_i18n": lambda v, c, m, p: _get_i18n_attr(m, "name"),
+        "company_i18n": lambda v, c, m, p: (_get_i18n_attr(m.company, "name") if getattr(m, "company", None) else ""),
+    }
     form_columns = [
         "name_en", "name_ru", "name_tk",
         "description_en", "description_ru", "description_tk",
@@ -181,6 +227,13 @@ class CertificateAdmin(SecureModelView):
 # Banner Admin
 # -----------------------------
 class BannerAdmin(SecureModelView):
+    column_list = ("title_i18n", "link")
+    column_labels = {
+        "title_i18n": _l("News"),
+    }
+    column_formatters = {
+        "title_i18n": lambda v, c, m, p: _get_i18n_attr(m, "title"),
+    }
     form_columns = [
         "image", "link",
         "title_en", "title_ru", "title_tk",
@@ -208,6 +261,13 @@ class BannerAdmin(SecureModelView):
 # Company Admin
 # -----------------------------
 class CompanyAdmin(SecureModelView):
+    column_list = ("name_i18n", "email", "phone")
+    column_labels = {
+        "name_i18n": _l("Users"),
+    }
+    column_formatters = {
+        "name_i18n": lambda v, c, m, p: _get_i18n_attr(m, "name"),
+    }
     form_columns = [
         "name_en", "name_ru", "name_tk",
         "mission_en", "mission_ru", "mission_tk",
@@ -233,6 +293,15 @@ class CompanyAdmin(SecureModelView):
 # ProductCategory Admin
 # -----------------------------
 class ProductCategoryAdmin(SecureModelView):
+    column_list = ("name_i18n", "slug", "parent_i18n")
+    column_labels = {
+        "name_i18n": _l("Categories"),
+        "parent_i18n": _l("Categories"),
+    }
+    column_formatters = {
+        "name_i18n": lambda v, c, m, p: _get_i18n_attr(m, "name"),
+        "parent_i18n": lambda v, c, m, p: (_get_i18n_attr(m.parent, "name") if getattr(m, "parent", None) else ""),
+    }
     form_columns = [
         "name_en", "name_ru", "name_tk",
         "slug",
@@ -267,20 +336,49 @@ class ContactMessageAdmin(SecureModelView):
 def create_admin(app):
     admin = Admin(
         app,
-        name="Admin Panel",
+        name=_l("Dashboard"),
         template_mode="bootstrap4",  # Изменено на bootstrap4 для совместимости
         index_view=MyAdminIndexView()
     )
 
-    admin.add_view(CompanyAdmin(Company, db.session, name="Companies"))
-    admin.add_view(ProductAdmin(Product, db.session, name="Products"))
-    admin.add_view(ProductCategoryAdmin(ProductCategory, db.session, name="Categories"))
-    admin.add_view(BrandAdmin(Brand, db.session, name="Brands"))
-    admin.add_view(NewsAdmin(News, db.session, name="News"))
-    admin.add_view(CertificateAdmin(Certificate, db.session, name="Certificates"))
-    admin.add_view(BannerAdmin(Banner, db.session, name="Banners"))
-    admin.add_view(ContactMessageAdmin(ContactMessage, db.session, name="Messages"))
-    admin.add_view(SecureModelView(NewsletterSubscriber, db.session, name="Subscribers"))
-    admin.add_view(SecureModelView(AdminUser, db.session, name="Users"))
+    # Имена соответствуют моделям (без дублирования «Подписчики»)
+    admin.add_view(CompanyAdmin(Company, db.session, name=_l("Companies"), menu_icon_type="fa", menu_icon_value="fa fa-building"))
+    admin.add_view(ProductAdmin(Product, db.session, name=_l("Products"), menu_icon_type="fa", menu_icon_value="fa fa-box"))
+    admin.add_view(ProductCategoryAdmin(ProductCategory, db.session, name=_l("Categories"), menu_icon_type="fa", menu_icon_value="fa fa-list"))
+    admin.add_view(BrandAdmin(Brand, db.session, name=_l("Brands"), menu_icon_type="fa", menu_icon_value="fa fa-tag"))
+    admin.add_view(NewsAdmin(News, db.session, name=_l("News"), menu_icon_type="fa", menu_icon_value="fa fa-newspaper"))
+    admin.add_view(CertificateAdmin(Certificate, db.session, name=_l("Certificates"), menu_icon_type="fa", menu_icon_value="fa fa-certificate"))
+    admin.add_view(BannerAdmin(Banner, db.session, name=_l("Banners"), menu_icon_type="fa", menu_icon_value="fa fa-image"))
+    admin.add_view(ContactMessageAdmin(ContactMessage, db.session, name=_l("Messages"), menu_icon_type="fa", menu_icon_value="fa fa-envelope"))
+    admin.add_view(SecureModelView(NewsletterSubscriber, db.session, name=_l("Subscribers"), menu_icon_type="fa", menu_icon_value="fa fa-users"))
+    admin.add_view(SecureModelView(AdminUser, db.session, name=_l("Users"), menu_icon_type="fa", menu_icon_value="fa fa-user-shield"))
 
     return admin
+
+
+# -----------------------------
+# Helpers
+# -----------------------------
+def _current_lang_code():
+    loc = str(get_locale() or "en")
+    if loc.startswith("ru"):
+        return "ru"
+    if loc.startswith("tk"):
+        return "tk"
+    return "en"
+
+
+def _get_i18n_attr(model_obj, base_name):
+    if model_obj is None:
+        return ""
+    lang = _current_lang_code()
+    preferred_attr = f"{base_name}_{lang}"
+    value = getattr(model_obj, preferred_attr, None)
+    if value:
+        return value
+    # fallback порядок: en -> ru -> tk
+    for fallback in ("en", "ru", "tk"):
+        val = getattr(model_obj, f"{base_name}_{fallback}", None)
+        if val:
+            return val
+    return ""
