@@ -1,0 +1,13 @@
+{% extends 'admin/model/edit.html' %}
+
+{% block tail %}
+    {{ super() }}
+    <script src="https://cdn.ckeditor.com/4.21.0/standard/ckeditor.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            document.querySelectorAll('textarea').forEach(function(field) {
+                CKEDITOR.replace(field);
+            });
+        });
+    </script>
+{% endblock %}
