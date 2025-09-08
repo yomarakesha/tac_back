@@ -1,0 +1,100 @@
+/* Базовая тема админки */
+:root {
+    --admin-bg: #f4f7fc;
+    --admin-card-bg: #ffffff;
+    --admin-text: #2c3e50;
+    --admin-accent: #2E6CF7;
+    --admin-muted: #6b7280;
+    --admin-border: #e6e9ef;
+}
+
+body {
+    background: var(--admin-bg);
+    font-family: 'Poppins', Arial, sans-serif;
+}
+
+.navbar.navbar-inverse {
+    background: #1a3c6d;
+    border: none;
+}
+
+.navbar .navbar-brand, .navbar .nav > li > a {
+    color: #fff !important;
+}
+
+.container-fluid .row .panel, .card, .panel {
+    border: none;
+    border-radius: 14px;
+    background: var(--admin-card-bg);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.06);
+}
+
+.panel-heading, .box-header {
+    border-bottom: 1px solid var(--admin-border);
+}
+
+.table > thead > tr > th {
+    background: #f9fbff;
+    color: var(--admin-text);
+    border-bottom: 1px solid var(--admin-border);
+}
+
+.btn, .btn-primary, .btn-default, .btn-info, .btn-success, .btn-danger {
+    border-radius: 10px !important;
+}
+
+.btn-primary, .btn-success {
+    background: var(--admin-accent);
+    border-color: var(--admin-accent);
+}
+
+.form-control {
+    border-radius: 10px;
+    border-color: var(--admin-border);
+}
+
+.breadcrumb {
+    background: transparent;
+}
+
+.pagination > li > a, .pagination > li > span {
+    border-radius: 8px !important;
+}
+
+/* Aлёрты */
+.alert {
+    border-radius: 12px;
+}
+
+/* Sticky header для таблиц */
+.table > thead th {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+}
+
+/* Адаптивность */
+@media (max-width: 992px) {
+    .navbar .navbar-collapse {
+        padding: 10px 0;
+    }
+    .panel, .card {
+        box-shadow: 0 6px 16px rgba(0,0,0,0.05);
+    }
+}
+
+@media (max-width: 768px) {
+    .btn, .form-control {
+        width: 100%;
+    }
+    .table-responsive {
+        width: 100%;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+    .navbar .nav > li > a {
+        padding: 8px 12px;
+    }
+}
+
+

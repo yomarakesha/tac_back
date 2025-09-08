@@ -1,0 +1,23 @@
+# .gitignore для Flask/Python проекта
+
+# Виртуальное окружение
+venv/
+
+# Кэш Python
+__pycache__/
+*.pyc
+
+# Flask instance folder (содержит базу данных и приватные файлы)
+instance/
+*.db
+
+# Переменные окружения
+.env
+
+# Системные файлы
+.DS_Store
+Thumbs.db
+
+# PyCharm/VSCode и другие IDE
+.idea/
+.vscode/

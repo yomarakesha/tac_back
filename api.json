@@ -1,0 +1,303 @@
+{
+  "api_specifications": {
+    "base_url": "https://api.yourwebsite.com",
+    "endpoints": [
+      {
+        "path": "/products",
+        "description": "Эндпоинт для получения списка всех продуктов или с фильтрами.",
+        "methods": [
+          {
+            "type": "GET",
+            "description": "Получить список продуктов.",
+            "query_parameters": [
+              {
+                "name": "category",
+                "type": "string",
+                "description": "Фильтрация по категории (используйте slug)."
+              },
+              {
+                "name": "brand",
+                "type": "string",
+                "description": "Фильтрация по бренду (используйте slug)."
+              },
+              {
+                "name": "search",
+                "type": "string",
+                "description": "Полнотекстовый поиск по названию продукта."
+              },
+              {
+                "name": "page",
+                "type": "integer",
+                "description": "Номер страницы для пагинации."
+              },
+              {
+                "name": "limit",
+                "type": "integer",
+                "description": "Количество товаров на странице."
+              }
+            ],
+            "response": {
+              "status": 200,
+              "body": {
+                "products": [
+                  {
+                    "id": "integer",
+                    "name": "string",
+                    "image": "string (URL)",
+                    "volume_or_weight": "string",
+                    "slug": "string"
+                  }
+                ],
+                "meta": {
+                  "total": "integer",
+                  "current_page": "integer",
+                  "last_page": "integer"
+                }
+              }
+            }
+          }
+        ]
+      },
+      {
+        "path": "/products/{slug}",
+        "description": "Эндпоинт для получения деталей одного продукта.",
+        "methods": [
+          {
+            "type": "GET",
+            "description": "Получить детальную информацию о продукте.",
+            "url_parameters": [
+              {
+                "name": "slug",
+                "type": "string",
+                "description": "Уникальный идентификатор продукта в URL."
+              }
+            ],
+            "response": {
+              "status": 200,
+              "body": {
+                "id": "integer",
+                "name": "string",
+                "slug": "string",
+                "brand": {
+                  "name": "string",
+                  "slug": "string"
+                },
+                "category": {
+                  "name": "string",
+                  "slug": "string"
+                },
+                "description": "text",
+                "volume_or_weight": "string",
+                "image": "string (URL)",
+                "additional_images": ["string (URL)"],
+                "packaging_details": "text",
+                "related_products": [
+                  {
+                    "id": "integer",
+                    "name": "string",
+                    "image": "string (URL)",
+                    "slug": "string"
+                  }
+                ]
+              }
+            }
+          }
+        ]
+      },
+      {
+        "path": "/categories",
+        "description": "Эндпоинт для получения списка категорий продуктов.",
+        "methods": [
+          {
+            "type": "GET",
+            "description": "Получить все категории, включая подкатегории.",
+            "response": {
+              "status": 200,
+              "body": [
+                {
+                  "id": "integer",
+                  "name": "string",
+                  "slug": "string",
+                  "subcategories": [
+                    {
+                      "id": "integer",
+                      "name": "string",
+                      "slug": "string"
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "path": "/brands",
+        "description": "Эндпоинт для получения списка всех брендов.",
+        "methods": [
+          {
+            "type": "GET",
+            "description": "Получить список брендов.",
+            "response": {
+              "status": 200,
+              "body": [
+                {
+                  "id": "integer",
+                  "name": "string",
+                  "logo_image": "string (URL)",
+                  "slug": "string"
+                }
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "path": "/brands/{slug}",
+        "description": "Эндпоинт для получения деталей бренда и его продуктов.",
+        "methods": [
+          {
+            "type": "GET",
+            "description": "Получить детальную информацию о бренде.",
+            "url_parameters": [
+              {
+                "name": "slug",
+                "type": "string"
+              }
+            ],
+            "response": {
+              "status": 200,
+              "body": {
+                "id": "integer",
+                "name": "string",
+                "logo_image": "string (URL)",
+                "description": "text",
+                "products": [
+                  {
+                    "id": "integer",
+                    "name": "string",
+                    "image": "string (URL)",
+                    "volume_or_weight": "string",
+                    "slug": "string"
+                  }
+                ]
+              }
+            }
+          }
+        ]
+      },
+      {
+        "path": "/news",
+        "description": "Эндпоинт для получения списка всех новостей.",
+        "methods": [
+          {
+            "type": "GET",
+            "description": "Получить список новостей.",
+            "response": {
+              "status": 200,
+              "body": [
+                {
+                  "id": "integer",
+                  "title": "string",
+                  "slug": "string",
+                  "image": "string (URL)",
+                  "publication_date": "date"
+                }
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "path": "/news/{slug}",
+        "description": "Эндпоинт для получения деталей одной новости.",
+        "methods": [
+          {
+            "type": "GET",
+            "description": "Получить детальную информацию о новости.",
+            "url_parameters": [
+              {
+                "name": "slug",
+                "type": "string"
+              }
+            ],
+            "response": {
+              "status": 200,
+              "body": {
+                "id": "integer",
+                "title": "string",
+                "slug": "string",
+                "publication_date": "date",
+                "image": "string (URL)",
+                "body_text": "text",
+                "related_products": ["string (slug)"]
+              }
+            }
+          }
+        ]
+      },
+      {
+        "path": "/banners",
+        "description": "Эндпоинт для получения списка баннеров.",
+        "methods": [
+          {
+            "type": "GET",
+            "description": "Получить все активные баннеры.",
+            "response": {
+              "status": 200,
+              "body": [
+                {
+                  "id": "integer",
+                  "image": "string (URL)",
+                  "link": "string (URL)",
+                  "title": "string",
+                  "description": "string"
+                }
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "path": "/contact",
+        "description": "Эндпоинт для отправки данных из контактной формы.",
+        "methods": [
+          {
+            "type": "POST",
+            "description": "Отправить сообщение.",
+            "request_body": {
+              "full_name": "string",
+              "email": "string",
+              "message": "string"
+            },
+            "response": {
+              "status": 200,
+              "body": {
+                "message": "string"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "path": "/subscribe",
+        "description": "Эндпоинт для подписки на рассылку.",
+        "methods": [
+          {
+            "type": "POST",
+            "description": "Подписать пользователя на рассылку.",
+            "request_body": {
+              "email": "string"
+            },
+            "response": {
+              "status": 200,
+              "body": {
+                "message": "string"
+              }
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

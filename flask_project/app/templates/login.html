@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Вход в админку</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        body {
+            font-family: "Segoe UI", Arial, sans-serif;
+            background: linear-gradient(135deg, #ADC9FF, #2E6CF7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .login-card {
+            background: #FFFFFF;
+            width: 380px;
+            padding: 40px;
+            border-radius: 16px;
+            box-shadow: 0 6px 24px rgba(0,0,0,0.15);
+        }
+
+        .login-card h2 {
+            text-align: center;
+            margin-bottom: 24px;
+            font-size: 24px;
+            color: #2D4263;
+        }
+
+        .login-card label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 14px;
+            color: #1F1F1F;
+        }
+
+        .login-card input {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 16px;
+            border: 1px solid #E0E0E0;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .login-card input:focus {
+            border-color: #2E6CF7;
+            outline: none;
+            box-shadow: 0 0 4px rgba(46,108,247,0.3);
+        }
+
+        .login-card button {
+            width: 100%;
+            padding: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            background: #2E6CF7;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .login-card button:hover {
+            background: #3568BC;
+        }
+
+        .login-card .error {
+            color: #D92D20;
+            font-size: 14px;
+            margin-bottom: 12px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-card">
+        <h2>Вход в админку</h2>
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                <div class="error">{{ messages[0] }}</div>
+            {% endif %}
+        {% endwith %}
+        <form method="post">
+            <label>Логин</label>
+            <input type="text" name="username" required>
+            <label>Пароль</label>
+            <input type="password" name="password" required>
+            <button type="submit">Войти</button>
+        </form>
+    </div>
+</body>
+</html>

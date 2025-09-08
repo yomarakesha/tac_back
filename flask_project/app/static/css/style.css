@@ -1,0 +1,40 @@
+body {
+    font-family: Arial, sans-serif;
+    background: #f9f9f9;
+}
+/* Общие улучшения для форм и таблиц админки */
+.form-control, .select2-container .select2-selection--single {
+    border-radius: 10px;
+    border-color: #dfe3e8;
+}
+
+.btn, .btn-primary, .btn-default {
+    border-radius: 10px;
+}
+
+.table thead th {
+    background: #f6f8fb;
+    color: #2c3e50;
+    border-bottom: 1px solid #e6e9ef;
+}
+
+.navbar, .navbar-inverse {
+    border-radius: 12px;
+}
+.login-box {
+    width: 300px;
+    margin: 100px auto;
+    padding: 20px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+.login-box input {
+    width: 100%;
+    padding: 8px;
+    margin: 8px 0;
+}
+.login-box button {
+    width: 100%;
+    padding: 10px;
+}
