@@ -71,6 +71,7 @@ class MultiImageUploadField(FileField):
 # CKEditor custom template
 # -----------------------------
 EDIT_TEMPLATE = "admin/edit.html"
+CREATE_TEMPLATE = "admin/create.html"
 
 # -----------------------------
 # Product Admin
@@ -107,7 +108,8 @@ class ProductAdmin(SecureModelView):
         "packaging_details_ru": TextAreaField,
         "packaging_details_tk": TextAreaField,
     }
-    form_template = EDIT_TEMPLATE
+    edit_template = EDIT_TEMPLATE
+    create_template = CREATE_TEMPLATE
     form_extra_fields = {
         "image": ImageUploadField(
             "Main Image",
@@ -146,7 +148,8 @@ class BrandAdmin(SecureModelView):
         "description_ru": TextAreaField,
         "description_tk": TextAreaField,
     }
-    form_template = EDIT_TEMPLATE
+    edit_template = EDIT_TEMPLATE
+    create_template = CREATE_TEMPLATE
     form_extra_fields = {
         "logo_image": ImageUploadField(
             "Logo",
@@ -180,7 +183,8 @@ class NewsAdmin(SecureModelView):
         "body_text_ru": TextAreaField,
         "body_text_tk": TextAreaField,
     }
-    form_template = EDIT_TEMPLATE
+    edit_template = EDIT_TEMPLATE
+    create_template = CREATE_TEMPLATE
     form_extra_fields = {
         "image": ImageUploadField(
             "News Image",
@@ -213,7 +217,8 @@ class CertificateAdmin(SecureModelView):
         "description_ru": TextAreaField,
         "description_tk": TextAreaField,
     }
-    form_template = EDIT_TEMPLATE
+    edit_template = EDIT_TEMPLATE
+    create_template = CREATE_TEMPLATE
     form_extra_fields = {
         "image": ImageUploadField(
             "Certificate Image",
@@ -247,7 +252,8 @@ class BannerAdmin(SecureModelView):
         "description_ru": TextAreaField,
         "description_tk": TextAreaField,
     }
-    form_template = EDIT_TEMPLATE
+    edit_template = EDIT_TEMPLATE
+    create_template = CREATE_TEMPLATE
     form_extra_fields = {
         "image": ImageUploadField(
             "Banner Image",
@@ -287,7 +293,8 @@ class CompanyAdmin(SecureModelView):
         "address_ru": TextAreaField,
         "address_tk": TextAreaField,
     }
-    form_template = EDIT_TEMPLATE
+    edit_template = EDIT_TEMPLATE
+    create_template = CREATE_TEMPLATE
 
 # -----------------------------
 # ProductCategory Admin
@@ -313,7 +320,8 @@ class ProductCategoryAdmin(SecureModelView):
         "description_ru": TextAreaField,
         "description_tk": TextAreaField,
     }
-    form_template = EDIT_TEMPLATE
+    edit_template = EDIT_TEMPLATE
+    create_template = CREATE_TEMPLATE
 
 # -----------------------------
 # ContactMessage Admin
@@ -329,6 +337,8 @@ class ContactMessageAdmin(SecureModelView):
         "message_ru": TextAreaField,
         "message_tk": TextAreaField,
     }
+    edit_template = EDIT_TEMPLATE
+    create_template = EDIT_TEMPLATE
 
 # -----------------------------
 # Initialize Admin
