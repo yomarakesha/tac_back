@@ -47,8 +47,7 @@ class MyAdminIndexView(AdminIndexView):
         return self.render("admin/dashboard.html", stats=stats, locale=get_locale())
 
     def is_visible(self):
-        return False  # скрываем из бокового меню
-
+        return False 
 # -----------------------------
 # Multi-image upload field
 # -----------------------------
@@ -77,12 +76,12 @@ CREATE_TEMPLATE = "admin/create.html"
 # Product Admin
 # -----------------------------
 class ProductAdmin(SecureModelView):
-    # Локализованные колонки списка
+   
     column_list = (
         "name_i18n", "slug", "brand_i18n", "category_i18n", "volume_or_weight",
     )
     column_labels = {
-        "name_i18n": _l("Products"),  # Отображаемое имя товара
+        "name_i18n": _l("Products"), 
         "brand_i18n": _l("Brands"),
         "category_i18n": _l("Categories"),
         "volume_or_weight": _l("Products"),
@@ -131,7 +130,7 @@ class BrandAdmin(SecureModelView):
     column_list = ("name_i18n", "slug", "company_i18n")
     column_labels = {
         "name_i18n": _l("Brands"),
-        "company_i18n": _l("Users"),  # просто метка; при желании добавить переводы Company
+        "company_i18n": _l("Users"),
     }
     column_formatters = {
         "name_i18n": lambda v, c, m, p: _get_i18n_attr(m, "name"),
@@ -200,7 +199,7 @@ class NewsAdmin(SecureModelView):
 class CertificateAdmin(SecureModelView):
     column_list = ("name_i18n", "company_i18n")
     column_labels = {
-        "name_i18n": _l("Certificates") if False else _l("Products"),  # заглушка перевода
+        "name_i18n": _l("Certificates") if False else _l("Products"),  
         "company_i18n": _l("Users"),
     }
     column_formatters = {
@@ -347,11 +346,10 @@ def create_admin(app):
     admin = Admin(
         app,
         name=_l("Dashboard"),
-        template_mode="bootstrap4",  # Изменено на bootstrap4 для совместимости
+        template_mode="bootstrap4",
         index_view=MyAdminIndexView()
     )
 
-    # Имена соответствуют моделям (без дублирования «Подписчики»)
     admin.add_view(CompanyAdmin(Company, db.session, name=_l("Companies"), menu_icon_type="fa", menu_icon_value="fa fa-building"))
     admin.add_view(ProductAdmin(Product, db.session, name=_l("Products"), menu_icon_type="fa", menu_icon_value="fa fa-box"))
     admin.add_view(ProductCategoryAdmin(ProductCategory, db.session, name=_l("Categories"), menu_icon_type="fa", menu_icon_value="fa fa-list"))
