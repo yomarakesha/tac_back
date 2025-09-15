@@ -107,8 +107,8 @@ class ProductAdmin(SecureModelView):
         "packaging_details_ru": TextAreaField,
         "packaging_details_tk": TextAreaField,
     }
-    edit_template = EDIT_TEMPLATE
-    create_template = CREATE_TEMPLATE
+    edit_template = "admin/model/edit.html"
+    create_template = "admin/model/create.html"
     form_extra_fields = {
         "image": ImageUploadField(
             "Main Image",
@@ -217,8 +217,8 @@ class CertificateAdmin(SecureModelView):
         "description_ru": TextAreaField,
         "description_tk": TextAreaField,
     }
-    edit_template = EDIT_TEMPLATE
-    create_template = CREATE_TEMPLATE
+    edit_template = "admin/model/edit.html"
+    create_template = "admin/model/create.html"
     form_extra_fields = {
         "image": ImageUploadField(
             "Certificate Image",
@@ -252,8 +252,8 @@ class BannerAdmin(SecureModelView):
         "description_ru": TextAreaField,
         "description_tk": TextAreaField,
     }
-    edit_template = EDIT_TEMPLATE
-    create_template = CREATE_TEMPLATE
+    edit_template = "admin/model/edit.html"
+    create_template = "admin/model/create.html"
     form_extra_fields = {
         "image": ImageUploadField(
             "Banner Image",
@@ -293,8 +293,8 @@ class CompanyAdmin(SecureModelView):
         "address_ru": TextAreaField,
         "address_tk": TextAreaField,
     }
-    edit_template = EDIT_TEMPLATE
-    create_template = CREATE_TEMPLATE
+    edit_template = "admin/model/edit.html"
+    create_template = "admin/model/create.html"
 
 # -----------------------------
 # ProductCategory Admin
@@ -320,8 +320,8 @@ class ProductCategoryAdmin(SecureModelView):
         "description_ru": TextAreaField,
         "description_tk": TextAreaField,
     }
-    edit_template = EDIT_TEMPLATE
-    create_template = CREATE_TEMPLATE
+    edit_template = "admin/model/edit.html"
+    create_template = "admin/model/create.html"
     form_extra_fields = {
         "image": ImageUploadField(
             "Category Image",
@@ -341,8 +341,8 @@ class ContactMessageAdmin(SecureModelView):
     form_overrides = {
         "message": TextAreaField,
     }
-    edit_template = EDIT_TEMPLATE
-    create_template = EDIT_TEMPLATE
+    edit_template = "admin/model/edit.html"
+    create_template = "admin/model/create.html"
 
 # -----------------------------
 # Initialize Admin
