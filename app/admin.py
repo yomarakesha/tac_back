@@ -138,6 +138,7 @@ class BrandAdmin(SecureModelView):
     }
     form_columns = [
         "name_en", "name_ru", "name_tk",
+        "subtitle_en", "subtitle_ru", "subtitle_tk",
         "slug",
         "description_en", "description_ru", "description_tk",
         "logo_image", "company"
