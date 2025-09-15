@@ -47,7 +47,7 @@ class MyAdminIndexView(AdminIndexView):
         return self.render("admin/dashboard.html", stats=stats, locale=get_locale())
 
     def is_visible(self):
-        return False 
+        return True 
 # -----------------------------
 # Multi-image upload field
 # -----------------------------
@@ -147,8 +147,9 @@ class BrandAdmin(SecureModelView):
         "description_ru": TextAreaField,
         "description_tk": TextAreaField,
     }
-    edit_template = EDIT_TEMPLATE
-    create_template = CREATE_TEMPLATE
+    # Убираем rich editor для брендов - используем стандартные шаблоны
+    edit_template = "admin/model/edit.html"
+    create_template = "admin/model/create.html"
     form_extra_fields = {
         "logo_image": ImageUploadField(
             "Logo",
@@ -312,7 +313,7 @@ class ProductCategoryAdmin(SecureModelView):
         "name_en", "name_ru", "name_tk",
         "slug",
         "description_en", "description_ru", "description_tk",
-        "parent"
+        "image", "parent"
     ]
     form_overrides = {
         "description_en": TextAreaField,
@@ -321,20 +322,24 @@ class ProductCategoryAdmin(SecureModelView):
     }
     edit_template = EDIT_TEMPLATE
     create_template = CREATE_TEMPLATE
+    form_extra_fields = {
+        "image": ImageUploadField(
+            "Category Image",
+            base_path=os.path.join("app", "static", "uploads", "categories"),
+            relative_path="categories/",
+            url_relative_path="static/uploads/categories/"
+        )
+    }
 
 # -----------------------------
 # ContactMessage Admin
 # -----------------------------
 class ContactMessageAdmin(SecureModelView):
     form_columns = [
-        "full_name", "email",
-        "message_en", "message_ru", "message_tk",
-        "submission_date"
+        "email", "message", "submission_date"
     ]
     form_overrides = {
-        "message_en": TextAreaField,
-        "message_ru": TextAreaField,
-        "message_tk": TextAreaField,
+        "message": TextAreaField,
     }
     edit_template = EDIT_TEMPLATE
     create_template = EDIT_TEMPLATE

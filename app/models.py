@@ -78,6 +78,7 @@ class ProductCategory(db.Model):
     description_en = db.Column(db.Text)
     description_ru = db.Column(db.Text)
     description_tk = db.Column(db.Text)
+    image = db.Column(db.String(250))  # изображение категории
     parent_category_id = db.Column(db.Integer, db.ForeignKey('product_category.id'), nullable=True)
     parent = db.relationship('ProductCategory', remote_side=[id], backref='subcategories')
 
@@ -137,11 +138,8 @@ class News(db.Model):
 class ContactMessage(db.Model):
     __tablename__ = "contact_message"
     id = db.Column(db.Integer, primary_key=True)
-    full_name = db.Column(db.String(120), nullable=False)
     email = db.Column(db.String(120), nullable=False)
-    message_en = db.Column(db.Text, nullable=False)
-    message_ru = db.Column(db.Text, nullable=False)
-    message_tk = db.Column(db.Text, nullable=False)
+    message = db.Column(db.Text, nullable=False)
     submission_date = db.Column(db.DateTime, default=datetime.utcnow)
 
 # Подписчики рассылки

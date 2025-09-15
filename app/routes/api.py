@@ -3,17 +3,28 @@ from ..models import db, Company, Certificate, Brand, ProductCategory, Product, 
 
 api_bp = Blueprint("api", __name__)
 
+def success_response(data=None, message="Success"):
+    """Создает успешный JSON ответ"""
+    response = {"success": True, "message": message}
+    if data is not None:
+        response["data"] = data
+    return jsonify(response)
+
+def error_response(message="Error", status_code=400):
+    """Создает ошибочный JSON ответ"""
+    return jsonify({"success": False, "message": message}), status_code
+
 def get_or_404(model, object_id):
     obj = model.query.get(object_id)
     if not obj:
-        return jsonify({"error": f"{model.__name__} with id {object_id} not found"}), 404
+        return error_response(f"{model.__name__} with id {object_id} not found", 404)
     return obj
 
 # ---------- COMPANY ----------
 @api_bp.route("/companies", methods=["GET"])
 def get_companies():
     companies = Company.query.all()
-    return jsonify([
+    data = [
         {
             "id": c.id,
             "name_en": c.name_en,
@@ -33,7 +44,8 @@ def get_companies():
             "map_coordinates": c.map_coordinates
         }
         for c in companies
-    ])
+    ]
+    return success_response(data, "Companies retrieved successfully")
 
 @api_bp.route("/companies/<int:company_id>", methods=["GET"])
 def get_company(company_id):
@@ -63,7 +75,7 @@ def get_company(company_id):
 @api_bp.route("/certificates", methods=["GET"])
 def get_certificates():
     items = Certificate.query.all()
-    return jsonify([
+    data = [
         {
             "id": i.id,
             "name_en": i.name_en,
@@ -75,14 +87,15 @@ def get_certificates():
             "company_id": i.company_id
         }
         for i in items
-    ])
+    ]
+    return success_response(data, "Certificates retrieved successfully")
 
 @api_bp.route("/certificates/<int:item_id>", methods=["GET"])
 def get_certificate(item_id):
     i = get_or_404(Certificate, item_id)
     if isinstance(i, tuple):
         return i
-    return jsonify({
+    data = {
         "id": i.id,
         "name_en": i.name_en,
         "name_ru": i.name_ru,
@@ -91,13 +104,14 @@ def get_certificate(item_id):
         "description_ru": i.description_ru,
         "description_tk": i.description_tk,
         "company_id": i.company_id
-    })
+    }
+    return success_response(data, "Certificate retrieved successfully")
 
 # ---------- BRAND ----------
 @api_bp.route("/brands", methods=["GET"])
 def get_brands():
     items = Brand.query.all()
-    return jsonify([
+    data = [
         {
             "id": i.id,
             "name_en": i.name_en,
@@ -110,14 +124,15 @@ def get_brands():
             "company_id": i.company_id
         }
         for i in items
-    ])
+    ]
+    return success_response(data, "Brands retrieved successfully")
 
 @api_bp.route("/brands/<int:item_id>", methods=["GET"])
 def get_brand(item_id):
     i = get_or_404(Brand, item_id)
     if isinstance(i, tuple):
         return i
-    return jsonify({
+    data = {
         "id": i.id,
         "name_en": i.name_en,
         "name_ru": i.name_ru,
@@ -127,13 +142,14 @@ def get_brand(item_id):
         "description_ru": i.description_ru,
         "description_tk": i.description_tk,
         "company_id": i.company_id
-    })
+    }
+    return success_response(data, "Brand retrieved successfully")
 
 # ---------- CATEGORY ----------
 @api_bp.route("/categories", methods=["GET"])
 def get_categories():
     items = ProductCategory.query.all()
-    return jsonify([
+    data = [
         {
             "id": i.id,
             "name_en": i.name_en,
@@ -143,17 +159,19 @@ def get_categories():
             "description_en": i.description_en,
             "description_ru": i.description_ru,
             "description_tk": i.description_tk,
+            "image": i.image,
             "parent_category_id": i.parent_category_id
         }
         for i in items
-    ])
+    ]
+    return success_response(data, "Categories retrieved successfully")
 
 @api_bp.route("/categories/<int:item_id>", methods=["GET"])
 def get_category(item_id):
     i = get_or_404(ProductCategory, item_id)
     if isinstance(i, tuple):
         return i
-    return jsonify({
+    data = {
         "id": i.id,
         "name_en": i.name_en,
         "name_ru": i.name_ru,
@@ -162,14 +180,16 @@ def get_category(item_id):
         "description_en": i.description_en,
         "description_ru": i.description_ru,
         "description_tk": i.description_tk,
+        "image": i.image,
         "parent_category_id": i.parent_category_id
-    })
+    }
+    return success_response(data, "Category retrieved successfully")
 
 # ---------- PRODUCT ----------
 @api_bp.route("/products", methods=["GET"])
 def get_products():
     items = Product.query.all()
-    return jsonify([
+    data = [
         {
             "id": i.id,
             "name_en": i.name_en,
@@ -189,14 +209,15 @@ def get_products():
             "brand_id": i.brand_id
         }
         for i in items
-    ])
+    ]
+    return success_response(data, "Products retrieved successfully")
 
 @api_bp.route("/products/<int:item_id>", methods=["GET"])
 def get_product(item_id):
     i = get_or_404(Product, item_id)
     if isinstance(i, tuple):
         return i
-    return jsonify({
+    data = {
         "id": i.id,
         "name_en": i.name_en,
         "name_ru": i.name_ru,
@@ -213,13 +234,14 @@ def get_product(item_id):
         "packaging_details_tk": i.packaging_details_tk,
         "category_id": i.category_id,
         "brand_id": i.brand_id
-    })
+    }
+    return success_response(data, "Product retrieved successfully")
 
 # ---------- NEWS ----------
 @api_bp.route("/news", methods=["GET"])
 def get_news():
     items = News.query.all()
-    return jsonify([
+    data = [
         {
             "id": i.id,
             "title_en": i.title_en,
@@ -234,14 +256,15 @@ def get_news():
             "company_id": i.company_id
         }
         for i in items
-    ])
+    ]
+    return success_response(data, "News retrieved successfully")
 
 @api_bp.route("/news/<int:item_id>", methods=["GET"])
 def get_news_item(item_id):
     i = get_or_404(News, item_id)
     if isinstance(i, tuple):
         return i
-    return jsonify({
+    data = {
         "id": i.id,
         "title_en": i.title_en,
         "title_ru": i.title_ru,
@@ -253,13 +276,14 @@ def get_news_item(item_id):
         "body_text_ru": i.body_text_ru,
         "body_text_tk": i.body_text_tk,
         "company_id": i.company_id
-    })
+    }
+    return success_response(data, "News item retrieved successfully")
 
 # ---------- BANNER ----------
 @api_bp.route("/banners", methods=["GET"])
 def get_banners():
     items = Banner.query.all()
-    return jsonify([
+    data = [
         {
             "id": i.id,
             "image": i.image,
@@ -272,14 +296,15 @@ def get_banners():
             "description_tk": i.description_tk
         }
         for i in items
-    ])
+    ]
+    return success_response(data, "Banners retrieved successfully")
 
 @api_bp.route("/banners/<int:item_id>", methods=["GET"])
 def get_banner(item_id):
     i = get_or_404(Banner, item_id)
     if isinstance(i, tuple):
         return i
-    return jsonify({
+    data = {
         "id": i.id,
         "image": i.image,
         "link": i.link,
@@ -289,22 +314,35 @@ def get_banner(item_id):
         "description_en": i.description_en,
         "description_ru": i.description_ru,
         "description_tk": i.description_tk
-    })
+    }
+    return success_response(data, "Banner retrieved successfully")
 
 # ---------- CONTACT MESSAGE (only POST) ----------
 @api_bp.route("/contact_messages", methods=["POST"])
 def create_contact_message():
-    data = request.json
-    msg = ContactMessage(**data)
-    db.session.add(msg)
-    db.session.commit()
-    return jsonify({"id": msg.id}), 201
+    try:
+        data = request.json
+        if not data or 'message' not in data or 'email' not in data:
+            return error_response("Email and message fields are required", 400)
+        
+        msg = ContactMessage(email=data['email'], message=data['message'])
+        db.session.add(msg)
+        db.session.commit()
+        return success_response({"id": msg.id}, "Contact message created successfully"), 201
+    except Exception as e:
+        return error_response(f"Error creating contact message: {str(e)}", 500)
 
 # ---------- NEWSLETTER SUBSCRIBER (only POST) ----------
 @api_bp.route("/newsletter_subscribers", methods=["POST"])
 def create_newsletter_subscriber():
-    data = request.json
-    sub = NewsletterSubscriber(**data)
-    db.session.add(sub)
-    db.session.commit()
-    return jsonify({"id": sub.id}), 201
+    try:
+        data = request.json
+        if not data or 'email' not in data:
+            return error_response("Email field is required", 400)
+        
+        sub = NewsletterSubscriber(email=data['email'])
+        db.session.add(sub)
+        db.session.commit()
+        return success_response({"id": sub.id}, "Newsletter subscriber created successfully"), 201
+    except Exception as e:
+        return error_response(f"Error creating newsletter subscriber: {str(e)}", 500)
