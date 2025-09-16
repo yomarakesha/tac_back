@@ -29,8 +29,7 @@ def _absolute_url(path: str):
     prefix = request.host_url.rstrip("/")
     normalized = path if path.startswith("/") else f"/{path}"
     return f"{prefix}{normalized}"
-
-# ---------- COMPANY ----------
+    
 @api_bp.route("/companies", methods=["GET"])
 def get_companies():
     companies = Company.query.all()
@@ -146,6 +145,29 @@ def get_brand(item_id):
     i = get_or_404(Brand, item_id)
     if isinstance(i, tuple):
         return i
+    data = {
+        "id": i.id,
+        "name_en": i.name_en,
+        "name_ru": i.name_ru,
+        "name_tk": i.name_tk,
+        "subtitle_en": getattr(i, "subtitle_en", None),
+        "subtitle_ru": getattr(i, "subtitle_ru", None),
+        "subtitle_tk": getattr(i, "subtitle_tk", None),
+        "slug": i.slug,
+        "description_en": i.description_en,
+        "description_ru": i.description_ru,
+        "description_tk": i.description_tk,
+        "company_id": i.company_id,
+        "logo_image": _absolute_url(i.logo_image)
+    }
+    return success_response(data, "Brand retrieved successfully")
+
+# ---------- BRAND by SLUG ----------
+@api_bp.route("/brands/<string:slug>", methods=["GET"])
+def get_brand_by_slug(slug):
+    i = Brand.query.filter_by(slug=slug).first()
+    if not i:
+        return error_response(f"Brand with slug {slug} not found", 404)
     data = {
         "id": i.id,
         "name_en": i.name_en,
