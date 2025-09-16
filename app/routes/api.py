@@ -20,6 +20,16 @@ def get_or_404(model, object_id):
         return error_response(f"{model.__name__} with id {object_id} not found", 404)
     return obj
 
+
+def _absolute_url(path: str):
+    if not path:
+        return None
+    if isinstance(path, str) and (path.startswith("http://") or path.startswith("https://")):
+        return path
+    prefix = request.host_url.rstrip("/")
+    normalized = path if path.startswith("/") else f"/{path}"
+    return f"{prefix}{normalized}"
+
 # ---------- COMPANY ----------
 @api_bp.route("/companies", methods=["GET"])
 def get_companies():
@@ -124,7 +134,8 @@ def get_brands():
             "description_en": i.description_en,
             "description_ru": i.description_ru,
             "description_tk": i.description_tk,
-            "company_id": i.company_id
+            "company_id": i.company_id,
+            "logo_image": _absolute_url(i.logo_image)
         }
         for i in items
     ]
@@ -147,7 +158,8 @@ def get_brand(item_id):
         "description_en": i.description_en,
         "description_ru": i.description_ru,
         "description_tk": i.description_tk,
-        "company_id": i.company_id
+        "company_id": i.company_id,
+        "logo_image": _absolute_url(i.logo_image)
     }
     return success_response(data, "Brand retrieved successfully")
 
