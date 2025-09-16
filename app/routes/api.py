@@ -345,8 +345,16 @@ def create_newsletter_subscriber():
         data = request.json
         if not data or 'email' not in data:
             return error_response("Email field is required", 400)
-        
-        sub = NewsletterSubscriber(email=data['email'])
+        email = (data.get('email') or '').strip().lower()
+        if not email:
+            return error_response("Email field is required", 400)
+
+        # Idempotent create: if exists, return 200 with existing id
+        existing = NewsletterSubscriber.query.filter_by(email=email).first()
+        if existing:
+            return success_response({"id": existing.id}, "Already subscribed"), 200
+
+        sub = NewsletterSubscriber(email=email)
         db.session.add(sub)
         db.session.commit()
         return success_response({"id": sub.id}, "Newsletter subscriber created successfully"), 201
