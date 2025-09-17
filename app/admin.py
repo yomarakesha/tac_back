@@ -113,7 +113,7 @@ class ProductAdmin(SecureModelView):
         "image": ImageUploadField(
             "Main Image",
             base_path=os.path.join("app", "static", "uploads", "products"),
-            relative_path="products/",
+            relative_path="",
             url_relative_path="static/uploads/products/"
         ),
         "additional_images": MultiImageUploadField("Additional Images")
@@ -155,7 +155,7 @@ class BrandAdmin(SecureModelView):
         "logo_image": ImageUploadField(
             "Logo",
             base_path=os.path.join("app", "static", "uploads", "brands"),
-            relative_path="brands/",
+            relative_path="",
             url_relative_path="static/uploads/brands/"
         )
     }
@@ -190,7 +190,7 @@ class NewsAdmin(SecureModelView):
         "image": ImageUploadField(
             "News Image",
             base_path=os.path.join("app", "static", "uploads", "news"),
-            relative_path="news/",
+            relative_path="",
             url_relative_path="static/uploads/news/"
         )
     }
@@ -224,7 +224,7 @@ class CertificateAdmin(SecureModelView):
         "image": ImageUploadField(
             "Certificate Image",
             base_path=os.path.join("app", "static", "uploads", "certificates"),
-            relative_path="certificates/",
+            relative_path="",
             url_relative_path="static/uploads/certificates/"
         )
     }
@@ -259,7 +259,7 @@ class BannerAdmin(SecureModelView):
         "image": ImageUploadField(
             "Banner Image",
             base_path=os.path.join("app", "static", "uploads", "banners"),
-            relative_path="banners/",
+            relative_path="",
             url_relative_path="static/uploads/banners/"
         )
     }
@@ -327,7 +327,7 @@ class ProductCategoryAdmin(SecureModelView):
         "image": ImageUploadField(
             "Category Image",
             base_path=os.path.join("app", "static", "uploads", "categories"),
-            relative_path="categories/",
+            relative_path="",
             url_relative_path="static/uploads/categories/"
         )
     }
