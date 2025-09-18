@@ -10,6 +10,9 @@ __pycache__/
 # Flask instance folder (содержит базу данных и приватные файлы)
 instance/
 *.db
+database.db
+*.sqlite
+*.sqlite3
 
 # Переменные окружения
 .env
@@ -21,3 +24,18 @@ Thumbs.db
 # PyCharm/VSCode и другие IDE
 .idea/
 .vscode/
+
+# Flask-specific
+*.log
+migrations/
+.flaskenv
+
+# Временные файлы
+*.tmp
+*.temp
+*.swp
+*.swo
+*~
+
+# Загруженные файлы (если нужно исключить)
+# app/static/uploads/
