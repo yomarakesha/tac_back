@@ -175,6 +175,7 @@ class NewsAdmin(SecureModelView):
     }
     form_columns = [
         "title_en", "title_ru", "title_tk",
+        "subtitle_en", "subtitle_ru", "subtitle_tk",
         "slug",
         "body_text_en", "body_text_ru", "body_text_tk",
         "publication_date", "image", "company", "products", "brands"

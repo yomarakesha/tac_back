@@ -126,6 +126,9 @@ class News(db.Model):
     title_en = db.Column(db.String(250), nullable=False)
     title_ru = db.Column(db.String(250), nullable=False)
     title_tk = db.Column(db.String(250), nullable=False)
+    subtitle_en = db.Column(db.String(250))
+    subtitle_ru = db.Column(db.String(250))
+    subtitle_tk = db.Column(db.String(250))
     slug = db.Column(db.String(250), unique=True, nullable=False)
     publication_date = db.Column(db.Date, default=datetime.utcnow().date)
     image = db.Column(db.String(250))
@@ -141,6 +144,7 @@ class News(db.Model):
 class ContactMessage(db.Model):
     __tablename__ = "contact_message"
     id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(120))
     email = db.Column(db.String(120), nullable=False)
     message = db.Column(db.Text, nullable=False)
     submission_date = db.Column(db.DateTime, default=datetime.utcnow)

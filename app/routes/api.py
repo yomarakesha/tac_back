@@ -228,28 +228,59 @@ def get_category(item_id):
 # ---------- PRODUCT ----------
 @api_bp.route("/products", methods=["GET"])
 def get_products():
-    items = Product.query.all()
-    data = [
+    # Filters: category (slug), brand (slug), search (in names), pagination (page, limit)
+    category_slug = request.args.get("category")
+    brand_slug = request.args.get("brand")
+    search_query = request.args.get("search")
+    try:
+        page = int(request.args.get("page", 1))
+        limit = int(request.args.get("limit", 20))
+    except ValueError:
+        return error_response("Invalid page or limit", 400)
+
+    query = Product.query
+
+    if category_slug:
+        category = ProductCategory.query.filter_by(slug=category_slug).first()
+        if not category:
+            return success_response({"products": [], "meta": {"total": 0, "current_page": 1, "last_page": 1}}, "Products retrieved successfully")
+        query = query.filter(Product.category_id == category.id)
+
+    if brand_slug:
+        brand = Brand.query.filter_by(slug=brand_slug).first()
+        if not brand:
+            return success_response({"products": [], "meta": {"total": 0, "current_page": 1, "last_page": 1}}, "Products retrieved successfully")
+        query = query.filter(Product.brand_id == brand.id)
+
+    if search_query:
+        like_expr = f"%{search_query}%"
+        query = query.filter(
+            (Product.name_en.ilike(like_expr)) |
+            (Product.name_ru.ilike(like_expr)) |
+            (Product.name_tk.ilike(like_expr))
+        )
+
+    total = query.count()
+    last_page = max((total + limit - 1) // limit, 1)
+    items = query.offset((page - 1) * limit).limit(limit).all()
+
+    products = [
         {
             "id": i.id,
             "name_en": i.name_en,
             "name_ru": i.name_ru,
             "name_tk": i.name_tk,
             "slug": i.slug,
-            "description_en": i.description_en,
-            "description_ru": i.description_ru,
-            "description_tk": i.description_tk,
+            "image": _absolute_url(i.image),
             "volume_or_weight": i.volume_or_weight,
-            "image": i.image,
-            "additional_images": i.additional_images,
-            "packaging_details_en": i.packaging_details_en,
-            "packaging_details_ru": i.packaging_details_ru,
-            "packaging_details_tk": i.packaging_details_tk,
-            "category_id": i.category_id,
-            "brand_id": i.brand_id
         }
         for i in items
     ]
+
+    data = {
+        "products": products,
+        "meta": {"total": total, "current_page": page, "last_page": last_page}
+    }
     return success_response(data, "Products retrieved successfully")
 
 @api_bp.route("/products/<int:item_id>", methods=["GET"])
@@ -277,6 +308,47 @@ def get_product(item_id):
     }
     return success_response(data, "Product retrieved successfully")
 
+# ---------- PRODUCT by SLUG ----------
+@api_bp.route("/products/<string:slug>", methods=["GET"])
+def get_product_by_slug(slug):
+    i = Product.query.filter_by(slug=slug).first()
+    if not i:
+        return error_response(f"Product with slug {slug} not found", 404)
+    data = {
+        "id": i.id,
+        "name_en": i.name_en,
+        "name_ru": i.name_ru,
+        "name_tk": i.name_tk,
+        "slug": i.slug,
+        "description_en": i.description_en,
+        "description_ru": i.description_ru,
+        "description_tk": i.description_tk,
+        "volume_or_weight": i.volume_or_weight,
+        "image": _absolute_url(i.image),
+        "additional_images": [
+            _absolute_url(p) for p in (i.additional_images or [])
+        ],
+        "packaging_details_en": i.packaging_details_en,
+        "packaging_details_ru": i.packaging_details_ru,
+        "packaging_details_tk": i.packaging_details_tk,
+        "category": {
+            "id": i.category.id,
+            "name_en": i.category.name_en,
+            "name_ru": i.category.name_ru,
+            "name_tk": i.category.name_tk,
+            "slug": i.category.slug,
+        } if i.category else None,
+        "brand": {
+            "id": i.brand.id,
+            "name_en": i.brand.name_en,
+            "name_ru": i.brand.name_ru,
+            "name_tk": i.brand.name_tk,
+            "slug": i.brand.slug,
+            "logo_image": _absolute_url(i.brand.logo_image)
+        } if i.brand else None,
+    }
+    return success_response(data, "Product retrieved successfully")
+
 # ---------- NEWS ----------
 @api_bp.route("/news", methods=["GET"])
 def get_news():
@@ -287,6 +359,9 @@ def get_news():
             "title_en": i.title_en,
             "title_ru": i.title_ru,
             "title_tk": i.title_tk,
+            "subtitle_en": getattr(i, "subtitle_en", None),
+            "subtitle_ru": getattr(i, "subtitle_ru", None),
+            "subtitle_tk": getattr(i, "subtitle_tk", None),
             "slug": i.slug,
             "publication_date": i.publication_date,
             "image": i.image,
@@ -309,6 +384,9 @@ def get_news_item(item_id):
         "title_en": i.title_en,
         "title_ru": i.title_ru,
         "title_tk": i.title_tk,
+        "subtitle_en": getattr(i, "subtitle_en", None),
+        "subtitle_ru": getattr(i, "subtitle_ru", None),
+        "subtitle_tk": getattr(i, "subtitle_tk", None),
         "slug": i.slug,
         "publication_date": i.publication_date,
         "image": i.image,
