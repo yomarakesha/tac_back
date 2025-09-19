@@ -19,6 +19,9 @@ def create_app():
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     app.config['BABEL_TRANSLATION_DIRECTORIES'] = 'translations'
     app.config['TEMPLATES_AUTO_RELOAD'] = True  # Отключение кэша шаблонов для разработки
+    
+    # Настройка для правильного обслуживания статических файлов
+    app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0  # Отключение кэширования для разработки
 
     db.init_app(app)
     migrate.init_app(app, db)
@@ -31,7 +34,7 @@ def create_app():
 
     create_admin(app)
     app.register_blueprint(auth_bp)
-    app.register_blueprint(lang_bp)  # ✅ регистрация blueprint для смены языка
+    app.register_blueprint(lang_bp)
     app.register_blueprint(api_bp, url_prefix="/api")
 
     with app.app_context():

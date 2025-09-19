@@ -122,6 +122,9 @@ class ProductAdmin(SecureModelView):
     def on_model_change(self, form, model, is_created):
         if form.additional_images.data:
             model.additional_images = form.additional_images.data
+        if form.image.data and hasattr(form.image.data, 'filename'):
+            # Сохраняем полный путь к изображению
+            model.image = f"static/uploads/products/{form.image.data.filename}"
 
 # -----------------------------
 # Brand Admin
@@ -160,6 +163,11 @@ class BrandAdmin(SecureModelView):
         )
     }
 
+    def on_model_change(self, form, model, is_created):
+        if form.logo_image.data and hasattr(form.logo_image.data, 'filename'):
+            # Сохраняем полный путь к изображению
+            model.logo_image = f"static/uploads/brands/{form.logo_image.data.filename}"
+
 # -----------------------------
 # News Admin
 # -----------------------------
@@ -196,6 +204,11 @@ class NewsAdmin(SecureModelView):
         )
     }
 
+    def on_model_change(self, form, model, is_created):
+        if form.image.data and hasattr(form.image.data, 'filename'):
+            # Сохраняем полный путь к изображению
+            model.image = f"static/uploads/news/{form.image.data.filename}"
+
 # -----------------------------
 # Certificate Admin
 # -----------------------------
@@ -229,6 +242,11 @@ class CertificateAdmin(SecureModelView):
             url_relative_path="static/uploads/certificates/"
         )
     }
+
+    def on_model_change(self, form, model, is_created):
+        if form.image.data and hasattr(form.image.data, 'filename'):
+            # Сохраняем полный путь к изображению
+            model.image = f"static/uploads/certificates/{form.image.data.filename}"
 
 # -----------------------------
 # Banner Admin
@@ -264,6 +282,11 @@ class BannerAdmin(SecureModelView):
             url_relative_path="static/uploads/banners/"
         )
     }
+
+    def on_model_change(self, form, model, is_created):
+        if form.image.data and hasattr(form.image.data, 'filename'):
+            # Сохраняем полный путь к изображению
+            model.image = f"static/uploads/banners/{form.image.data.filename}"
 
 # -----------------------------
 # Company Admin
@@ -333,12 +356,18 @@ class ProductCategoryAdmin(SecureModelView):
         )
     }
 
+    def on_model_change(self, form, model, is_created):
+        if form.image.data and hasattr(form.image.data, 'filename'):
+            # Сохраняем полный путь к изображению
+            model.image = f"static/uploads/categories/{form.image.data.filename}"
+
 # -----------------------------
 # ContactMessage Admin
 # -----------------------------
 class ContactMessageAdmin(SecureModelView):
+    column_list = ("name", "email", "submission_date")
     form_columns = [
-        "email", "message", "submission_date"
+        "name", "email", "message", "submission_date"
     ]
     form_overrides = {
         "message": TextAreaField,

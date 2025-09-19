@@ -24,10 +24,28 @@ def get_or_404(model, object_id):
 def _absolute_url(path: str):
     if not path:
         return None
+    
+    # Если уже абсолютный URL, возвращаем как есть
     if isinstance(path, str) and (path.startswith("http://") or path.startswith("https://")):
         return path
+    
+    # Получаем базовый URL из запроса
     prefix = request.host_url.rstrip("/")
-    normalized = path if path.startswith("/") else f"/{path}"
+    
+    # Нормализуем путь к статическому файлу
+    if path.startswith("static/"):
+        # Путь уже содержит static/, добавляем только /
+        normalized = f"/{path}"
+    elif path.startswith("/static/"):
+        # Путь уже содержит /static/, используем как есть
+        normalized = path
+    else:
+        # Добавляем /static/ к началу пути
+        if path.startswith("/"):
+            normalized = f"/static{path}"
+        else:
+            normalized = f"/static/{path}"
+    
     return f"{prefix}{normalized}"
     
 @api_bp.route("/companies", methods=["GET"])
@@ -199,7 +217,7 @@ def get_categories():
             "description_en": i.description_en,
             "description_ru": i.description_ru,
             "description_tk": i.description_tk,
-            "image": i.image,
+            "image": _absolute_url(i.image),
             "parent_category_id": i.parent_category_id
         }
         for i in items
@@ -220,7 +238,7 @@ def get_category(item_id):
         "description_en": i.description_en,
         "description_ru": i.description_ru,
         "description_tk": i.description_tk,
-        "image": i.image,
+        "image": _absolute_url(i.image),
         "parent_category_id": i.parent_category_id
     }
     return success_response(data, "Category retrieved successfully")
@@ -298,8 +316,10 @@ def get_product(item_id):
         "description_ru": i.description_ru,
         "description_tk": i.description_tk,
         "volume_or_weight": i.volume_or_weight,
-        "image": i.image,
-        "additional_images": i.additional_images,
+        "image": _absolute_url(i.image),
+        "additional_images": [
+            _absolute_url(p) for p in (i.additional_images or [])
+        ],
         "packaging_details_en": i.packaging_details_en,
         "packaging_details_ru": i.packaging_details_ru,
         "packaging_details_tk": i.packaging_details_tk,
@@ -364,7 +384,7 @@ def get_news():
             "subtitle_tk": getattr(i, "subtitle_tk", None),
             "slug": i.slug,
             "publication_date": i.publication_date,
-            "image": i.image,
+            "image": _absolute_url(i.image),
             "body_text_en": i.body_text_en,
             "body_text_ru": i.body_text_ru,
             "body_text_tk": i.body_text_tk,
@@ -389,7 +409,7 @@ def get_news_item(item_id):
         "subtitle_tk": getattr(i, "subtitle_tk", None),
         "slug": i.slug,
         "publication_date": i.publication_date,
-        "image": i.image,
+        "image": _absolute_url(i.image),
         "body_text_en": i.body_text_en,
         "body_text_ru": i.body_text_ru,
         "body_text_tk": i.body_text_tk,
@@ -404,7 +424,7 @@ def get_banners():
     data = [
         {
             "id": i.id,
-            "image": i.image,
+            "image": _absolute_url(i.image),
             "link": i.link,
             "title_en": i.title_en,
             "title_ru": i.title_ru,
@@ -424,7 +444,7 @@ def get_banner(item_id):
         return i
     data = {
         "id": i.id,
-        "image": i.image,
+        "image": _absolute_url(i.image),
         "link": i.link,
         "title_en": i.title_en,
         "title_ru": i.title_ru,
@@ -442,8 +462,15 @@ def create_contact_message():
         data = request.json
         if not data or 'message' not in data or 'email' not in data:
             return error_response("Email and message fields are required", 400)
-        
-        msg = ContactMessage(email=data['email'], message=data['message'])
+
+    
+        name_value = (data.get('name') or data.get('full_name') or '').strip()
+
+        msg = ContactMessage(
+            name=name_value or None,
+            email=data['email'],
+            message=data['message']
+        )
         db.session.add(msg)
         db.session.commit()
         return success_response({"id": msg.id}, "Contact message created successfully"), 201
