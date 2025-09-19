@@ -365,8 +365,9 @@ class ProductCategoryAdmin(SecureModelView):
 # ContactMessage Admin
 # -----------------------------
 class ContactMessageAdmin(SecureModelView):
+    column_list = ("name", "email", "submission_date")
     form_columns = [
-        "email", "message", "submission_date"
+        "name", "email", "message", "submission_date"
     ]
     form_overrides = {
         "message": TextAreaField,

@@ -462,8 +462,15 @@ def create_contact_message():
         data = request.json
         if not data or 'message' not in data or 'email' not in data:
             return error_response("Email and message fields are required", 400)
-        
-        msg = ContactMessage(email=data['email'], message=data['message'])
+
+    
+        name_value = (data.get('name') or data.get('full_name') or '').strip()
+
+        msg = ContactMessage(
+            name=name_value or None,
+            email=data['email'],
+            message=data['message']
+        )
         db.session.add(msg)
         db.session.commit()
         return success_response({"id": msg.id}, "Contact message created successfully"), 201
