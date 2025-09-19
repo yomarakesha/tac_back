@@ -105,13 +105,7 @@ def get_certificates():
     data = [
         {
             "id": i.id,
-            "name_en": i.name_en,
-            "name_ru": i.name_ru,
-            "name_tk": i.name_tk,
-            "description_en": i.description_en,
-            "description_ru": i.description_ru,
-            "description_tk": i.description_tk,
-            "company_id": i.company_id
+            "image": _absolute_url(i.image)
         }
         for i in items
     ]
@@ -124,13 +118,7 @@ def get_certificate(item_id):
         return i
     data = {
         "id": i.id,
-        "name_en": i.name_en,
-        "name_ru": i.name_ru,
-        "name_tk": i.name_tk,
-        "description_en": i.description_en,
-        "description_ru": i.description_ru,
-        "description_tk": i.description_tk,
-        "company_id": i.company_id
+        "image": _absolute_url(i.image)
     }
     return success_response(data, "Certificate retrieved successfully")
 
@@ -388,6 +376,7 @@ def get_news():
             "body_text_en": i.body_text_en,
             "body_text_ru": i.body_text_ru,
             "body_text_tk": i.body_text_tk,
+            "reading_minutes": i.reading_minutes,
             "company_id": i.company_id
         }
         for i in items
@@ -413,6 +402,7 @@ def get_news_item(item_id):
         "body_text_en": i.body_text_en,
         "body_text_ru": i.body_text_ru,
         "body_text_tk": i.body_text_tk,
+        "reading_minutes": i.reading_minutes,
         "company_id": i.company_id
     }
     return success_response(data, "News item retrieved successfully")
@@ -425,13 +415,7 @@ def get_banners():
         {
             "id": i.id,
             "image": _absolute_url(i.image),
-            "link": i.link,
-            "title_en": i.title_en,
-            "title_ru": i.title_ru,
-            "title_tk": i.title_tk,
-            "description_en": i.description_en,
-            "description_ru": i.description_ru,
-            "description_tk": i.description_tk
+            "link": i.link
         }
         for i in items
     ]
@@ -445,13 +429,7 @@ def get_banner(item_id):
     data = {
         "id": i.id,
         "image": _absolute_url(i.image),
-        "link": i.link,
-        "title_en": i.title_en,
-        "title_ru": i.title_ru,
-        "title_tk": i.title_tk,
-        "description_en": i.description_en,
-        "description_ru": i.description_ru,
-        "description_tk": i.description_tk
+        "link": i.link
     }
     return success_response(data, "Banner retrieved successfully")
 

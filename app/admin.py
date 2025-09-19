@@ -186,7 +186,7 @@ class NewsAdmin(SecureModelView):
         "subtitle_en", "subtitle_ru", "subtitle_tk",
         "slug",
         "body_text_en", "body_text_ru", "body_text_tk",
-        "publication_date", "image", "company", "products", "brands"
+        "publication_date", "reading_minutes", "image", "company"
     ]
     form_overrides = {
         "body_text_en": TextAreaField,
@@ -213,25 +213,11 @@ class NewsAdmin(SecureModelView):
 # Certificate Admin
 # -----------------------------
 class CertificateAdmin(SecureModelView):
-    column_list = ("name_i18n", "company_i18n")
+    column_list = ("id", "image")
     column_labels = {
-        "name_i18n": _l("Certificates") if False else _l("Products"),  
-        "company_i18n": _l("Users"),
+        "image": _l("Certificate Image"),
     }
-    column_formatters = {
-        "name_i18n": lambda v, c, m, p: _get_i18n_attr(m, "name"),
-        "company_i18n": lambda v, c, m, p: (_get_i18n_attr(m.company, "name") if getattr(m, "company", None) else ""),
-    }
-    form_columns = [
-        "name_en", "name_ru", "name_tk",
-        "description_en", "description_ru", "description_tk",
-        "image", "company"
-    ]
-    form_overrides = {
-        "description_en": TextAreaField,
-        "description_ru": TextAreaField,
-        "description_tk": TextAreaField,
-    }
+    form_columns = ["image"]
     edit_template = "admin/model/edit.html"
     create_template = "admin/model/create.html"
     form_extra_fields = {
@@ -252,26 +238,12 @@ class CertificateAdmin(SecureModelView):
 # Banner Admin
 # -----------------------------
 class BannerAdmin(SecureModelView):
-    column_list = ("title_i18n", "link")
+    column_list = ("id", "image", "link")
     column_labels = {
-        "title_i18n": _l("News"),
+        "image": _l("Banner Image"),
+        "link": _l("Link"),
     }
-    column_formatters = {
-        "title_i18n": lambda v, c, m, p: _get_i18n_attr(m, "title"),
-    }
-    form_columns = [
-        "image", "link",
-        "title_en", "title_ru", "title_tk",
-        "description_en", "description_ru", "description_tk"
-    ]
-    form_overrides = {
-        "title_en": TextAreaField,
-        "title_ru": TextAreaField,
-        "title_tk": TextAreaField,
-        "description_en": TextAreaField,
-        "description_ru": TextAreaField,
-        "description_tk": TextAreaField,
-    }
+    form_columns = ["image", "link"]
     edit_template = "admin/model/edit.html"
     create_template = "admin/model/create.html"
     form_extra_fields = {

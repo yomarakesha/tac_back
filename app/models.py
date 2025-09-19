@@ -42,15 +42,7 @@ class Company(db.Model):
 class Certificate(db.Model):
     __tablename__ = "certificate"
     id = db.Column(db.Integer, primary_key=True)
-    name_en = db.Column(db.String(250), nullable=False)
-    name_ru = db.Column(db.String(250), nullable=False)
-    name_tk = db.Column(db.String(250), nullable=False)
     image = db.Column(db.String(250))
-    description_en = db.Column(db.Text)
-    description_ru = db.Column(db.Text)
-    description_tk = db.Column(db.Text)
-    company_id = db.Column(db.Integer, db.ForeignKey('company.id'), nullable=False)
-    company = db.relationship('Company', backref='certificates')
 
 # Торговые марки
 class Brand(db.Model):
@@ -107,17 +99,6 @@ class Product(db.Model):
     category = db.relationship('ProductCategory', backref='products')
     brand = db.relationship('Brand', backref='products')
 
-# Промежуточная таблица для many-to-many связи News-Product
-news_product_association = db.Table('news_product',
-    db.Column('news_id', db.Integer, db.ForeignKey('news.id'), primary_key=True),
-    db.Column('product_id', db.Integer, db.ForeignKey('product.id'), primary_key=True)
-)
-
-# Промежуточная таблица для many-to-many связи News-Brand
-news_brand_association = db.Table('news_brand',
-    db.Column('news_id', db.Integer, db.ForeignKey('news.id'), primary_key=True),
-    db.Column('brand_id', db.Integer, db.ForeignKey('brand.id'), primary_key=True)
-)
 
 # Новости
 class News(db.Model):
@@ -135,10 +116,9 @@ class News(db.Model):
     body_text_en = db.Column(db.Text)
     body_text_ru = db.Column(db.Text)
     body_text_tk = db.Column(db.Text)
+    reading_minutes = db.Column(db.Integer, default=5)  # время чтения в минутах
     company_id = db.Column(db.Integer, db.ForeignKey('company.id'), nullable=False)
     company = db.relationship('Company', backref='news')
-    products = db.relationship('Product', secondary=news_product_association, backref='related_news')
-    brands = db.relationship('Brand', secondary=news_brand_association, backref='related_news')
 
 # Сообщения из контактной формы
 class ContactMessage(db.Model):
@@ -162,9 +142,3 @@ class Banner(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     image = db.Column(db.String(250))
     link = db.Column(db.String(250))
-    title_en = db.Column(db.String(250))
-    title_ru = db.Column(db.String(250))
-    title_tk = db.Column(db.String(250))
-    description_en = db.Column(db.String(500))
-    description_ru = db.Column(db.String(500))
-    description_tk = db.Column(db.String(500))
