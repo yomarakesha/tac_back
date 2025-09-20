@@ -326,6 +326,24 @@ def get_product(item_id):
         "brand_id": i.brand_id
     }
     return success_response(data, "Product retrieved successfully")
+from sqlalchemy.sql.expression import func
+
+@api_bp.route("/products/recommendations/<int:exclude_id>", methods=["GET"])
+def get_random_products(exclude_id):
+    items = Product.query.filter(Product.id != exclude_id).order_by(func.random()).limit(3).all()
+    data = [
+        {
+            "id": i.id,
+            "name_en": i.name_en,
+            "name_ru": i.name_ru,
+            "name_tk": i.name_tk,
+            "slug": i.slug,
+            "image": _absolute_url(i.image),
+            "volume_or_weight": i.volume_or_weight,
+        }
+        for i in items
+    ]
+    return success_response(data, "Random products retrieved successfully")
 
 # ---------- PRODUCT by SLUG ----------
 @api_bp.route("/products/<string:slug>", methods=["GET"])
@@ -371,8 +389,19 @@ def get_product_by_slug(slug):
 # ---------- NEWS ----------
 @api_bp.route("/news", methods=["GET"])
 def get_news():
-    items = News.query.all()
-    data = [
+    try:
+        page = int(request.args.get("page", 1))
+        limit = int(request.args.get("limit", 20))
+    except ValueError:
+        return error_response("Invalid page or limit", 400)
+
+    query = News.query.order_by(News.publication_date.desc())  # можно сортировать по дате публикации
+
+    total = query.count()
+    last_page = max((total + limit - 1) // limit, 1)
+    items = query.offset((page - 1) * limit).limit(limit).all()
+
+    news_items = [
         {
             "id": i.id,
             "title_en": i.title_en,
@@ -392,6 +421,15 @@ def get_news():
         }
         for i in items
     ]
+
+    data = {
+        "news": news_items,
+        "meta": {
+            "total": total,
+            "current_page": page,
+            "last_page": last_page
+        }
+    }
     return success_response(data, "News retrieved successfully")
 
 @api_bp.route("/news/<int:item_id>", methods=["GET"])
@@ -417,6 +455,23 @@ def get_news_item(item_id):
         "company_id": i.company_id
     }
     return success_response(data, "News item retrieved successfully")
+@api_bp.route("/news/recommendations/<int:exclude_id>", methods=["GET"])
+def get_random_news(exclude_id):
+    items = News.query.filter(News.id != exclude_id).order_by(func.random()).limit(3).all()
+    data = [
+        {
+            "id": i.id,
+            "title_en": i.title_en,
+            "title_ru": i.title_ru,
+            "title_tk": i.title_tk,
+            "slug": i.slug,
+            "image": _absolute_url(i.image),
+            "publication_date": i.publication_date,
+        }
+        for i in items
+    ]
+    return success_response(data, "Random news retrieved successfully")
+
 # ---------- NEWS by SLUG ----------
 @api_bp.route("/news/<string:slug>", methods=["GET"])
 def get_news_by_slug(slug):
