@@ -417,6 +417,30 @@ def get_news_item(item_id):
         "company_id": i.company_id
     }
     return success_response(data, "News item retrieved successfully")
+# ---------- NEWS by SLUG ----------
+@api_bp.route("/news/<string:slug>", methods=["GET"])
+def get_news_by_slug(slug):
+    i = News.query.filter_by(slug=slug).first()
+    if not i:
+        return error_response(f"News with slug {slug} not found", 404)
+    data = {
+        "id": i.id,
+        "title_en": i.title_en,
+        "title_ru": i.title_ru,
+        "title_tk": i.title_tk,
+        "subtitle_en": getattr(i, "subtitle_en", None),
+        "subtitle_ru": getattr(i, "subtitle_ru", None),
+        "subtitle_tk": getattr(i, "subtitle_tk", None),
+        "slug": i.slug,
+        "publication_date": i.publication_date,
+        "image": _absolute_url(i.image),
+        "body_text_en": i.body_text_en,
+        "body_text_ru": i.body_text_ru,
+        "body_text_tk": i.body_text_tk,
+        "reading_minutes": i.reading_minutes,
+        "company_id": i.company_id
+    }
+    return success_response(data, "News item retrieved successfully")
 
 # ---------- BANNER ----------
 @api_bp.route("/banners", methods=["GET"])
