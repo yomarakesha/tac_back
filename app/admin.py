@@ -213,11 +213,12 @@ class NewsAdmin(SecureModelView):
 # Certificate Admin
 # -----------------------------
 class CertificateAdmin(SecureModelView):
-    column_list = ("id", "image")
+    column_list = ("id", "slug", "image")
     column_labels = {
         "image": _l("Certificate Image"),
+        "slug": _l("Slug"),
     }
-    form_columns = ["image"]
+    form_columns = ["slug", "image"]
     edit_template = "admin/model/edit.html"
     create_template = "admin/model/create.html"
     form_extra_fields = {
@@ -231,19 +232,20 @@ class CertificateAdmin(SecureModelView):
 
     def on_model_change(self, form, model, is_created):
         if form.image.data and hasattr(form.image.data, 'filename'):
-            # Сохраняем полный путь к изображению
             model.image = f"static/uploads/certificates/{form.image.data.filename}"
+
 
 # -----------------------------
 # Banner Admin
 # -----------------------------
 class BannerAdmin(SecureModelView):
-    column_list = ("id", "image", "link")
+    column_list = ("id", "slug", "image", "link")
     column_labels = {
         "image": _l("Banner Image"),
         "link": _l("Link"),
+        "slug": _l("Slug"),
     }
-    form_columns = ["image", "link"]
+    form_columns = ["slug", "image", "link"]
     edit_template = "admin/model/edit.html"
     create_template = "admin/model/create.html"
     form_extra_fields = {
@@ -257,9 +259,7 @@ class BannerAdmin(SecureModelView):
 
     def on_model_change(self, form, model, is_created):
         if form.image.data and hasattr(form.image.data, 'filename'):
-            # Сохраняем полный путь к изображению
             model.image = f"static/uploads/banners/{form.image.data.filename}"
-
 # -----------------------------
 # Company Admin
 # -----------------------------

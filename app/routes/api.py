@@ -121,6 +121,17 @@ def get_certificate(item_id):
         "image": _absolute_url(i.image)
     }
     return success_response(data, "Certificate retrieved successfully")
+@api_bp.route("/certificates/<string:slug>", methods=["GET"])
+def get_certificate_by_slug(slug):
+    i = Certificate.query.filter_by(slug=slug).first()
+    if not i:
+        return error_response(f"Certificate with slug {slug} not found", 404)
+    data = {
+        "id": i.id,
+        "slug": i.slug,
+        "image": _absolute_url(i.image)
+    }
+    return success_response(data, "Certificate retrieved successfully")
 
 # ---------- BRAND ----------
 @api_bp.route("/brands", methods=["GET"])
@@ -428,6 +439,18 @@ def get_banner(item_id):
         return i
     data = {
         "id": i.id,
+        "image": _absolute_url(i.image),
+        "link": i.link
+    }
+    return success_response(data, "Banner retrieved successfully")
+@api_bp.route("/banners/<string:slug>", methods=["GET"])
+def get_banner_by_slug(slug):
+    i = Banner.query.filter_by(slug=slug).first()
+    if not i:
+        return error_response(f"Banner with slug {slug} not found", 404)
+    data = {
+        "id": i.id,
+        "slug": i.slug,
         "image": _absolute_url(i.image),
         "link": i.link
     }

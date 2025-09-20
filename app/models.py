@@ -43,6 +43,7 @@ class Certificate(db.Model):
     __tablename__ = "certificate"
     id = db.Column(db.Integer, primary_key=True)
     image = db.Column(db.String(250))
+    slug = db.Column(db.String(120), unique=True, nullable=False)
 
 # Торговые марки
 class Brand(db.Model):
@@ -73,7 +74,7 @@ class ProductCategory(db.Model):
     description_en = db.Column(db.Text)
     description_ru = db.Column(db.Text)
     description_tk = db.Column(db.Text)
-    image = db.Column(db.String(250))  # изображение категории
+    image = db.Column(db.String(250))
     parent_category_id = db.Column(db.Integer, db.ForeignKey('product_category.id'), nullable=True)
     parent = db.relationship('ProductCategory', remote_side=[id], backref='subcategories')
 
@@ -89,8 +90,8 @@ class Product(db.Model):
     description_ru = db.Column(db.Text)
     description_tk = db.Column(db.Text)
     volume_or_weight = db.Column(db.String(50))
-    image = db.Column(db.String(250))  # главное изображение
-    additional_images = db.Column(db.JSON, default=[])  # список картинок
+    image = db.Column(db.String(250))
+    additional_images = db.Column(db.JSON, default=[])
     packaging_details_en = db.Column(db.Text)
     packaging_details_ru = db.Column(db.Text)
     packaging_details_tk = db.Column(db.Text)
@@ -98,7 +99,6 @@ class Product(db.Model):
     brand_id = db.Column(db.Integer, db.ForeignKey('brand.id'), nullable=False)
     category = db.relationship('ProductCategory', backref='products')
     brand = db.relationship('Brand', backref='products')
-
 
 # Новости
 class News(db.Model):
@@ -116,7 +116,7 @@ class News(db.Model):
     body_text_en = db.Column(db.Text)
     body_text_ru = db.Column(db.Text)
     body_text_tk = db.Column(db.Text)
-    reading_minutes = db.Column(db.Integer, default=5)  # время чтения в минутах
+    reading_minutes = db.Column(db.Integer, default=5)
     company_id = db.Column(db.Integer, db.ForeignKey('company.id'), nullable=False)
     company = db.relationship('Company', backref='news')
 
@@ -142,3 +142,4 @@ class Banner(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     image = db.Column(db.String(250))
     link = db.Column(db.String(250))
+    slug = db.Column(db.String(120), unique=True, nullable=False)
