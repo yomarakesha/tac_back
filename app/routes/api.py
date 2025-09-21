@@ -222,8 +222,6 @@ def get_categories():
         for i in items
     ]
     return success_response(data, "Categories retrieved successfully")
-
-# Получить только родительские категории
 @api_bp.route("/categories/parents", methods=["GET"])
 def get_parent_categories():
     items = ProductCategory.query.filter_by(parent_category_id=None).all()
