@@ -20,6 +20,25 @@ class AdminUser(UserMixin, db.Model):
 
 # Основная модель компании
 class Company(db.Model):
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "name_en": self.name_en,
+            "name_ru": self.name_ru,
+            "name_tk": self.name_tk,
+            "mission_en": self.mission_en,
+            "mission_ru": self.mission_ru,
+            "mission_tk": self.mission_tk,
+            "vision_en": self.vision_en,
+            "vision_ru": self.vision_ru,
+            "vision_tk": self.vision_tk,
+            "phone": self.phone,
+            "email": self.email,
+            "address_en": self.address_en,
+            "address_ru": self.address_ru,
+            "address_tk": self.address_tk,
+            "map_coordinates": self.map_coordinates
+        }
     __tablename__ = "company"
     id = db.Column(db.Integer, primary_key=True)
     name_en = db.Column(db.String(250), nullable=True)
@@ -40,6 +59,13 @@ class Company(db.Model):
 
 # Сертификаты
 class Certificate(db.Model):
+    def to_dict(self, absolute_url_func=None):
+        image_url = absolute_url_func(self.image) if absolute_url_func else self.image
+        return {
+            "id": self.id,
+            "image": image_url,
+            "slug": getattr(self, "slug", None)
+        }
     __tablename__ = "certificate"
     id = db.Column(db.Integer, primary_key=True)
     image = db.Column(db.String(250))
@@ -47,6 +73,23 @@ class Certificate(db.Model):
 
 # Торговые марки
 class Brand(db.Model):
+    def to_dict(self, absolute_url_func=None):
+        logo_url = absolute_url_func(self.logo_image) if absolute_url_func else self.logo_image
+        return {
+            "id": self.id,
+            "name_en": self.name_en,
+            "name_ru": self.name_ru,
+            "name_tk": self.name_tk,
+            "subtitle_en": self.subtitle_en,
+            "subtitle_ru": self.subtitle_ru,
+            "subtitle_tk": self.subtitle_tk,
+            "slug": self.slug,
+            "description_en": self.description_en,
+            "description_ru": self.description_ru,
+            "description_tk": self.description_tk,
+            "company_id": self.company_id,
+            "logo_image": logo_url
+        }
     __tablename__ = "brand"
     id = db.Column(db.Integer, primary_key=True)
     name_en = db.Column(db.String(120), nullable=False)
@@ -65,6 +108,20 @@ class Brand(db.Model):
 
 # Категории товаров
 class ProductCategory(db.Model):
+    def to_dict(self, absolute_url_func=None):
+        image_url = absolute_url_func(self.image) if absolute_url_func else self.image
+        return {
+            "id": self.id,
+            "name_en": self.name_en,
+            "name_ru": self.name_ru,
+            "name_tk": self.name_tk,
+            "slug": self.slug,
+            "description_en": self.description_en,
+            "description_ru": self.description_ru,
+            "description_tk": self.description_tk,
+            "image": image_url,
+            "parent_category_id": self.parent_category_id
+        }
     __tablename__ = "product_category"
     id = db.Column(db.Integer, primary_key=True)
     name_en = db.Column(db.String(120), nullable=False)
@@ -80,6 +137,27 @@ class ProductCategory(db.Model):
 
 # Товары
 class Product(db.Model):
+    def to_dict(self, absolute_url_func=None):
+        image_url = absolute_url_func(self.image) if absolute_url_func else self.image
+        additional_images = [absolute_url_func(p) for p in (self.additional_images or [])] if absolute_url_func else (self.additional_images or [])
+        return {
+            "id": self.id,
+            "name_en": self.name_en,
+            "name_ru": self.name_ru,
+            "name_tk": self.name_tk,
+            "slug": self.slug,
+            "description_en": self.description_en,
+            "description_ru": self.description_ru,
+            "description_tk": self.description_tk,
+            "volume_or_weight": self.volume_or_weight,
+            "image": image_url,
+            "additional_images": additional_images,
+            "packaging_details_en": self.packaging_details_en,
+            "packaging_details_ru": self.packaging_details_ru,
+            "packaging_details_tk": self.packaging_details_tk,
+            "category_id": self.category_id,
+            "brand_id": self.brand_id
+        }
     __tablename__ = "product"
     id = db.Column(db.Integer, primary_key=True)
     name_en = db.Column(db.String(250), nullable=False)
@@ -102,6 +180,25 @@ class Product(db.Model):
 
 # Новости
 class News(db.Model):
+    def to_dict(self, absolute_url_func=None):
+        image_url = absolute_url_func(self.image) if absolute_url_func else self.image
+        return {
+            "id": self.id,
+            "title_en": self.title_en,
+            "title_ru": self.title_ru,
+            "title_tk": self.title_tk,
+            "subtitle_en": self.subtitle_en,
+            "subtitle_ru": self.subtitle_ru,
+            "subtitle_tk": self.subtitle_tk,
+            "slug": self.slug,
+            "publication_date": self.publication_date,
+            "image": image_url,
+            "body_text_en": self.body_text_en,
+            "body_text_ru": self.body_text_ru,
+            "body_text_tk": self.body_text_tk,
+            "reading_minutes": self.reading_minutes,
+            "company_id": self.company_id
+        }
     __tablename__ = "news"
     id = db.Column(db.Integer, primary_key=True)
     title_en = db.Column(db.String(250), nullable=False)
@@ -138,6 +235,14 @@ class NewsletterSubscriber(db.Model):
 
 # Баннеры
 class Banner(db.Model):
+    def to_dict(self, absolute_url_func=None):
+        image_url = absolute_url_func(self.image) if absolute_url_func else self.image
+        return {
+            "id": self.id,
+            "image": image_url,
+            "link": self.link,
+            "slug": getattr(self, "slug", None)
+        }
     __tablename__ = "banner"
     id = db.Column(db.Integer, primary_key=True)
     image = db.Column(db.String(250))
