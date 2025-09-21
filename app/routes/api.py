@@ -131,16 +131,26 @@ def get_category(item_id):
 @api_bp.route("/products", methods=["GET"])
 def get_products():
     category_id = request.args.get("category_id", type=int)
+    category_slug = request.args.get("category", type=str)
     query = Product.query
 
     if category_id:
-        # Найти все дочерние категории (один уровень вложенности)
+        # Фильтрация по id категории и её дочерним
         child_categories = ProductCategory.query.filter_by(parent_category_id=category_id).all()
         child_ids = [cat.id for cat in child_categories]
-        # Включить саму родительскую категорию
         all_category_ids = [category_id] + child_ids
-        # Фильтровать продукты по этим категориям
         query = query.filter(Product.category_id.in_(all_category_ids))
+    elif category_slug:
+        # Фильтрация по слагу категории и её дочерним
+        parent_category = ProductCategory.query.filter_by(slug=category_slug).first()
+        if parent_category:
+            child_categories = ProductCategory.query.filter_by(parent_category_id=parent_category.id).all()
+            child_ids = [cat.id for cat in child_categories]
+            all_category_ids = [parent_category.id] + child_ids
+            query = query.filter(Product.category_id.in_(all_category_ids))
+        else:
+            # Если категория не найдена — вернуть пустой список
+            return success_response([])
 
     products = query.all()
     return success_response([product.to_dict() for product in products])
