@@ -223,6 +223,27 @@ def get_categories():
     ]
     return success_response(data, "Categories retrieved successfully")
 
+# Получить только родительские категории
+@api_bp.route("/categories/parents", methods=["GET"])
+def get_parent_categories():
+    items = ProductCategory.query.filter_by(parent_category_id=None).all()
+    data = [
+        {
+            "id": i.id,
+            "name_en": i.name_en,
+            "name_ru": i.name_ru,
+            "name_tk": i.name_tk,
+            "slug": i.slug,
+            "description_en": i.description_en,
+            "description_ru": i.description_ru,
+            "description_tk": i.description_tk,
+            "image": _absolute_url(i.image),
+            "parent_category_id": i.parent_category_id
+        }
+        for i in items
+    ]
+    return success_response(data, "Parent categories retrieved successfully")
+
 @api_bp.route("/categories/<int:item_id>", methods=["GET"])
 def get_category(item_id):
     i = get_or_404(ProductCategory, item_id)
