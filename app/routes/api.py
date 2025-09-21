@@ -130,48 +130,20 @@ def get_category(item_id):
 # ---------- PRODUCT ----------
 @api_bp.route("/products", methods=["GET"])
 def get_products():
-    # Filters: category (slug), brand (slug), search (in names), pagination (page, limit)
-    category_slug = request.args.get("category")
-    brand_slug = request.args.get("brand")
-    search_query = request.args.get("search")
-    try:
-        page = int(request.args.get("page", 1))
-        limit = int(request.args.get("limit", 20))
-    except ValueError:
-        return error_response("Invalid page or limit", 400)
-
+    category_id = request.args.get("category_id", type=int)
     query = Product.query
 
-    if category_slug:
-        category = ProductCategory.query.filter_by(slug=category_slug).first()
-        if not category:
-            return success_response({"products": [], "meta": {"total": 0, "current_page": 1, "last_page": 1}}, "Products retrieved successfully")
-        query = query.filter(Product.category_id == category.id)
+    if category_id:
+        # Найти все дочерние категории (один уровень вложенности)
+        child_categories = ProductCategory.query.filter_by(parent_category_id=category_id).all()
+        child_ids = [cat.id for cat in child_categories]
+        # Включить саму родительскую категорию
+        all_category_ids = [category_id] + child_ids
+        # Фильтровать продукты по этим категориям
+        query = query.filter(Product.category_id.in_(all_category_ids))
 
-    if brand_slug:
-        brand = Brand.query.filter_by(slug=brand_slug).first()
-        if not brand:
-            return success_response({"products": [], "meta": {"total": 0, "current_page": 1, "last_page": 1}}, "Products retrieved successfully")
-        query = query.filter(Product.brand_id == brand.id)
-
-    if search_query:
-        like_expr = f"%{search_query}%"
-        query = query.filter(
-            (Product.name_en.ilike(like_expr)) |
-            (Product.name_ru.ilike(like_expr)) |
-            (Product.name_tk.ilike(like_expr))
-        )
-
-    total = query.count()
-    last_page = max((total + limit - 1) // limit, 1)
-    items = query.offset((page - 1) * limit).limit(limit).all()
-
-    products = [i.to_dict(absolute_url_func=_absolute_url) for i in items]
-    data = {
-        "products": products,
-        "meta": {"total": total, "current_page": page, "last_page": last_page}
-    }
-    return success_response(data, "Products retrieved successfully")
+    products = query.all()
+    return success_response([product.to_dict() for product in products])
 
 @api_bp.route("/products/<int:item_id>", methods=["GET"])
 def get_product(item_id):
