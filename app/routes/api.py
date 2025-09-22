@@ -132,6 +132,8 @@ def get_category(item_id):
 def get_products():
     category_id = request.args.get("category_id", type=int)
     category_slug = request.args.get("category", type=str)
+    page = request.args.get("page", default=1, type=int)
+    limit = request.args.get("limit", default=20, type=int)
     query = Product.query
 
     if category_id:
@@ -149,11 +151,29 @@ def get_products():
             all_category_ids = [parent_category.id] + child_ids
             query = query.filter(Product.category_id.in_(all_category_ids))
         else:
-            # Если категория не найдена — вернуть пустой список
-            return success_response([])
+            # Если категория не найдена — вернуть пустой список с мета
+            return success_response({
+                "products": [],
+                "meta": {
+                    "total": 0,
+                    "current_page": page,
+                    "last_page": 1
+                }
+            })
 
-    products = query.all()
-    return success_response([product.to_dict() for product in products])
+    total = query.count()
+    last_page = max((total + limit - 1) // limit, 1)
+    products = query.offset((page - 1) * limit).limit(limit).all()
+
+    data = {
+        "products": [product.to_dict() for product in products],
+        "meta": {
+            "total": total,
+            "current_page": page,
+            "last_page": last_page
+        }
+    }
+    return success_response(data, "Products retrieved successfully")
 
 @api_bp.route("/products/<int:item_id>", methods=["GET"])
 def get_product(item_id):
