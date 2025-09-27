@@ -132,6 +132,7 @@ def get_category(item_id):
 def get_products():
     category_id = request.args.get("category_id", type=int)
     category_slug = request.args.get("category", type=str)
+    search_query= request.args.get("q", type=str)
     page = request.args.get("page", default=1, type=int)
     limit = request.args.get("limit", default=20, type=int)
     query = Product.query
@@ -160,6 +161,16 @@ def get_products():
                     "last_page": 1
                 }
             })
+# фильтрация по поисковому запросу
+    if search_query:
+        query = query.filter(
+            (Product.name_en.ilike(f"%{search_query}%")) |
+            (Product.name_ru.ilike(f"%{search_query}%")) |
+            (Product.name_tk.ilike(f"%{search_query}%")) |
+            (Product.description_en.ilike(f"%{search_query}%")) |
+            (Product.description_ru.ilike(f"%{search_query}%")) |
+            (Product.description_tk.ilike(f"%{search_query}%"))
+        )
 
     total = query.count()
     last_page = max((total + limit - 1) // limit, 1)
