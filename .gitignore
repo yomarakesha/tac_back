@@ -39,3 +39,26 @@ migrations/
 
 # Загруженные файлы (если нужно исключить)
 # app/static/uploads/
+
+# IDE settings
+*.code-workspace
+
+# OS specific
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+desktop.ini
+
+# Distribution
+dist/
+build/
+*.egg-info/
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
