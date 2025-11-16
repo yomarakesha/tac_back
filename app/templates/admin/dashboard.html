@@ -1,195 +1,165 @@
 {% extends 'admin/master.html' %}
 {% block head %}
     {{ super() }}
-    <!-- Подключение Bootstrap 5 -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
-    <!-- Подключение Font Awesome для иконок -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA==" crossorigin="anonymous">
-    <!-- Подключение Google Fonts (Poppins) -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap" rel="stylesheet">
-    <!-- Кастомные стили -->
     <style>
         body {
-            font-family: 'Poppins', sans-serif;
-            background-color: #f4f7fc;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
         }
-        .dashboard-container {
+        .container-fluid {
             padding: 2rem 1rem;
         }
-        .dashboard-title {
-            font-weight: 700;
-            color: #1a3c6d;
-            text-align: center;
+        .dashboard-header {
             margin-bottom: 2rem;
-            animation: fadeIn 1s ease-in;
         }
-        .card {
-            border: none;
-            border-radius: 12px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            background: linear-gradient(135deg, #ffffff, #f8f9fa);
-        }
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
-        }
-        .card-icon {
-            font-size: 2rem;
-            color: #1a3c6d;
-            margin-bottom: 0.5rem;
-        }
-        .card-title {
-            font-size: 1.25rem;
-            font-weight: 500;
-            color: #2c3e50;
-        }
-        .card-text {
-            font-size: 2rem;
+        .dashboard-title {
+            font-size: 2.5rem;
             font-weight: 700;
-            color: #007bff;
-        }
-        .lang-switcher a {
-            text-decoration: none;
-            color: #007bff;
-            margin: 0 0.5rem;
-            transition: color 0.3s ease;
-        }
-        .lang-switcher a:hover {
-            color: #0056b3;
-            text-decoration: underline;
-        }
-        .logout-btn {
-            background-color: #dc3545;
-            border: none;
-            padding: 0.5rem 1.5rem;
-            border-radius: 8px;
-            transition: background-color 0.3s ease;
-        }
-        .logout-btn:hover {
-            background-color: #c82333;
-        }
-        .welcome-text {
+            background: linear-gradient(135deg, #2E6CF7 0%, #FF6B6B 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 1.5rem;
             text-align: center;
-            color: #34495e;
-            margin-top: 2rem;
-            font-size: 1.2rem;
         }
-        /* Анимация появления */
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+        .dashboard-actions {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-bottom: 2rem;
+            justify-content: center;
         }
-        .card {
-            animation: fadeIn 0.5s ease-in;
-            animation-fill-mode: backwards;
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
         }
-        .card:nth-child(2) { animation-delay: 0.1s; }
-        .card:nth-child(3) { animation-delay: 0.2s; }
-        .card:nth-child(4) { animation-delay: 0.3s; }
-        .card:nth-child(5) { animation-delay: 0.4s; }
-        .card:nth-child(6) { animation-delay: 0.5s; }
-        /* Адаптивность */
-        @media (max-width: 576px) {
-            .dashboard-title {
-                font-size: 1.5rem;
-            }
-            .lang-switcher a {
-                display: block;
-                margin: 0.5rem 0;
-            }
-            .card-text {
-                font-size: 1.5rem;
-            }
+        .stat-card {
+            background: linear-gradient(135deg, #fff 0%, #f8f9fa 100%);
+            border-left: 4px solid;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, rgba(46, 108, 247, 0.05) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+        .stat-card:nth-child(1) {
+            border-left-color: #2E6CF7;
+        }
+        .stat-card:nth-child(2) {
+            border-left-color: #FF6B6B;
+        }
+        .stat-card:nth-child(3) {
+            border-left-color: #51CF66;
+        }
+        .stat-card:nth-child(4) {
+            border-left-color: #FFD93D;
+        }
+        .stat-card:nth-child(5) {
+            border-left-color: #4D96FF;
+        }
+        .stat-card:nth-child(6) {
+            border-left-color: #FF8787;
+        }
+        .stat-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 30px rgba(46, 108, 247, 0.2);
+        }
+        .stat-label {
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            position: relative;
+            z-index: 1;
+        }
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #2E6CF7 0%, #FF6B6B 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            position: relative;
+            z-index: 1;
+        }
+        .lang-selector {
+            display: flex;
+            gap: 0.75rem;
+            margin-top: 1.5rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .lang-selector a {
+            padding: 0.75rem 1.5rem;
+            border: 2px solid #2E6CF7;
+            border-radius: 6px;
+            text-decoration: none;
+            color: #2E6CF7;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        .lang-selector a:hover {
+            background: linear-gradient(90deg, #2E6CF7 0%, #4D96FF 100%);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(46, 108, 247, 0.3);
         }
     </style>
 {% endblock %}
 {% block body %}
-    <div class="dashboard-container">
-        <!-- Отладочная информация о текущей локали -->
-
-
-        <!-- Заголовок дашборда -->
-        <h1 class="dashboard-title">📊 {% trans %}Dashboard{% endtrans %}</h1>
-
-        <!-- Ссылка для выхода -->
-        <div class="mb-4 text-center">
-            <a href="{{ url_for('auth.logout') }}" class="btn logout-btn text-white">{% trans %}Logout{% endtrans %}</a>
-        </div>
-
-        <!-- Ссылки для переключения языка -->
-        <div class="lang-switcher mb-4 text-center">
-            <a href="{{ url_for('lang.set_lang', lang='en') }}">English</a>
-            <a href="{{ url_for('lang.set_lang', lang='ru') }}">Русский</a>
-            <a href="{{ url_for('lang.set_lang', lang='tk') }}">Türkmençe</a>
-        </div>
-
-        <!-- Статистика: первая строка -->
-        <div class="row g-4">
-            <div class="col-12 col-sm-6 col-md-4 col-lg-3">
-                <div class="card">
-                    <div class="card-body text-center">
-                        <i class="fas fa-box card-icon"></i>
-                        <h3 class="card-title">{% trans %}Products{% endtrans %}</h3>
-                        <p class="card-text">{{ stats.products }}</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-12 col-sm-6 col-md-4 col-lg-3">
-                <div class="card">
-                    <div class="card-body text-center">
-                        <i class="fas fa-list card-icon"></i>
-                        <h3 class="card-title">{% trans %}Categories{% endtrans %}</h3>
-                        <p class="card-text">{{ stats.categories }}</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-12 col-sm-6 col-md-4 col-lg-3">
-                <div class="card">
-                    <div class="card-body text-center">
-                        <i class="fas fa-tag card-icon"></i>
-                        <h3 class="card-title">{% trans %}Brands{% endtrans %}</h3>
-                        <p class="card-text">{{ stats.brands }}</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-12 col-sm-6 col-md-4 col-lg-3">
-                <div class="card">
-                    <div class="card-body text-center">
-                        <i class="fas fa-newspaper card-icon"></i>
-                        <h3 class="card-title">{% trans %}News{% endtrans %}</h3>
-                        <p class="card-text">{{ stats.news }}</p>
-                    </div>
-                </div>
+    <div class="container-fluid">
+        <!-- Header -->
+        <div class="dashboard-header">
+            <h1 class="dashboard-title">📊 Панель управления</h1>
+            
+            <!-- Actions -->
+            <div class="dashboard-actions">
+                <a href="{{ url_for('auth.logout') }}" class="btn btn-danger">Выход</a>
             </div>
         </div>
 
-        <!-- Статистика: вторая строка -->
-        <div class="row g-4 mt-2">
-            <div class="col-12 col-sm-6 col-md-4 col-lg-3">
-                <div class="card">
-                    <div class="card-body text-center">
-                        <i class="fas fa-users card-icon"></i>
-                        <h3 class="card-title">{% trans %}Subscribers{% endtrans %}</h3>
-                        <p class="card-text">{{ stats.subscribers }}</p>
-                    </div>
-                </div>
+        <!-- Statistics -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-label">Товары</div>
+                <div class="stat-value">{{ stats.products }}</div>
             </div>
-            <div class="col-12 col-sm-6 col-md-4 col-lg-3">
-                <div class="card">
-                    <div class="card-body text-center">
-                        <i class="fas fa-user-shield card-icon"></i>
-                        <h3 class="card-title">{% trans %}Users{% endtrans %}</h3>
-                        <p class="card-text">{{ stats.users }}</p>
-                    </div>
-                </div>
+            <div class="stat-card">
+                <div class="stat-label">Категории</div>
+                <div class="stat-value">{{ stats.categories }}</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Бренды</div>
+                <div class="stat-value">{{ stats.brands }}</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Новости</div>
+                <div class="stat-value">{{ stats.news }}</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Подписчики</div>
+                <div class="stat-value">{{ stats.subscribers }}</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Пользователи</div>
+                <div class="stat-value">{{ stats.users }}</div>
             </div>
         </div>
-
-        <!-- Приветственное сообщение -->
-        <p class="welcome-text">{% trans %}Welcome to the admin panel!{% endtrans %}</p>
     </div>
-
-    <!-- Подключение Bootstrap 5 JS (для интерактивных компонентов, если нужно) -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
 {% endblock %}

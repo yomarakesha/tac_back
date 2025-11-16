@@ -17,7 +17,7 @@ from .models import (
 # -----------------------------
 class SecureModelView(ModelView):
     # Подключаем общий CSS для всех страниц модели
-    extra_css = ["/static/css/admin.css"]
+    extra_css = ["/static/css/admin-new.css", "/static/css/admin.css"]
     # Глобальные скрипты (переключатель темы и быстрый поиск)
     extra_js = ["/static/js/admin-theme.js"]
     def is_accessible(self):
@@ -31,6 +31,10 @@ class SecureModelView(ModelView):
 # Admin Dashboard
 # -----------------------------
 class MyAdminIndexView(AdminIndexView):
+    # Подключаем те же файлы стилей, что и у SecureModelView, чтобы дашборд и страницы списка совпадали
+    extra_css = ["/static/css/admin-new.css", "/static/css/admin.css"]
+    extra_js = ["/static/js/admin-theme.js"]
+
     @expose("/")
     def index(self):
         stats = {
@@ -81,10 +85,24 @@ class ProductAdmin(SecureModelView):
         "name_i18n", "slug", "brand_i18n", "category_i18n", "volume_or_weight",
     )
     column_labels = {
-        "name_i18n": _l("Products"), 
-        "brand_i18n": _l("Brands"),
-        "category_i18n": _l("Categories"),
-        "volume_or_weight": _l("Products"),
+        "name_i18n": "Товары", 
+        "name_en": "Название (EN)",
+        "name_ru": "Название (RU)",
+        "name_tk": "Название (TK)",
+        "slug": "Адрес страницы",
+        "description_en": "Описание (EN)",
+        "description_ru": "Описание (RU)",
+        "description_tk": "Описание (TK)",
+        "volume_or_weight": "Объём/Вес",
+        "image": "Основное изображение",
+        "additional_images": "Дополнительные изображения",
+        "packaging_details_en": "Детали упаковки (EN)",
+        "packaging_details_ru": "Детали упаковки (RU)",
+        "packaging_details_tk": "Детали упаковки (TK)",
+        "brand_i18n": "Бренды",
+        "category_i18n": "Категории",
+        "brand": "Бренды",
+        "category": "Категории",
     }
     column_formatters = {
         "name_i18n": lambda v, c, m, p: _get_i18n_attr(m, "name"),
@@ -132,8 +150,20 @@ class ProductAdmin(SecureModelView):
 class BrandAdmin(SecureModelView):
     column_list = ("name_i18n", "slug", "company_i18n")
     column_labels = {
-        "name_i18n": _l("Brands"),
-        "company_i18n": _l("Users"),
+        "name_i18n": "Бренды",
+        "name_en": "Название (EN)",
+        "name_ru": "Название (RU)",
+        "name_tk": "Название (TK)",
+        "subtitle_en": "Подзаголовок (EN)",
+        "subtitle_ru": "Подзаголовок (RU)",
+        "subtitle_tk": "Подзаголовок (TK)",
+        "slug": "Адрес страницы",
+        "description_en": "Описание (EN)",
+        "description_ru": "Описание (RU)",
+        "description_tk": "Описание (TK)",
+        "logo_image": "Логотип",
+        "company_i18n": "Компания",
+        "company": "Компания",
     }
     column_formatters = {
         "name_i18n": lambda v, c, m, p: _get_i18n_attr(m, "name"),
@@ -174,8 +204,22 @@ class BrandAdmin(SecureModelView):
 class NewsAdmin(SecureModelView):
     column_list = ("title_i18n", "slug", "publication_date", "company_i18n")
     column_labels = {
-        "title_i18n": _l("News"),
-        "company_i18n": _l("Users"),
+        "title_i18n": "Новости",
+        "title_en": "Заголовок (EN)",
+        "title_ru": "Заголовок (RU)",
+        "title_tk": "Заголовок (TK)",
+        "subtitle_en": "Подзаголовок (EN)",
+        "subtitle_ru": "Подзаголовок (RU)",
+        "subtitle_tk": "Подзаголовок (TK)",
+        "slug": "Адрес страницы",
+        "body_text_en": "Текст (EN)",
+        "body_text_ru": "Текст (RU)",
+        "body_text_tk": "Текст (TK)",
+        "publication_date": "Дата публикации",
+        "reading_minutes": "Время чтения (минут)",
+        "image": "Изображение новости",
+        "company_i18n": "Компания",
+        "company": "Компания",
     }
     column_formatters = {
         "title_i18n": lambda v, c, m, p: _get_i18n_attr(m, "title"),
@@ -215,8 +259,9 @@ class NewsAdmin(SecureModelView):
 class CertificateAdmin(SecureModelView):
     column_list = ("id", "slug", "image")
     column_labels = {
-        "image": _l("Certificate Image"),
-        "slug": _l("Slug"),
+        "id": "ID",
+        "image": "Изображение сертификата",
+        "slug": "Адрес страницы",
     }
     form_columns = ["slug", "image"]
     edit_template = "admin/model/edit.html"
@@ -241,9 +286,10 @@ class CertificateAdmin(SecureModelView):
 class BannerAdmin(SecureModelView):
     column_list = ("id", "slug", "image", "link")
     column_labels = {
-        "image": _l("Banner Image"),
-        "link": _l("Link"),
-        "slug": _l("Slug"),
+        "id": "ID",
+        "image": "Изображение баннера",
+        "link": "Ссылка",
+        "slug": "Адрес страницы",
     }
     form_columns = ["slug", "image", "link"]
     edit_template = "admin/model/edit.html"
@@ -266,7 +312,22 @@ class BannerAdmin(SecureModelView):
 class CompanyAdmin(SecureModelView):
     column_list = ("name_i18n", "email", "phone")
     column_labels = {
-        "name_i18n": _l("Users"),
+        "name_i18n": "Компании",
+        "name_en": "Название (EN)",
+        "name_ru": "Название (RU)",
+        "name_tk": "Название (TK)",
+        "mission_en": "Миссия (EN)",
+        "mission_ru": "Миссия (RU)",
+        "mission_tk": "Миссия (TK)",
+        "vision_en": "Видение (EN)",
+        "vision_ru": "Видение (RU)",
+        "vision_tk": "Видение (TK)",
+        "phone": "Телефон",
+        "email": "Email",
+        "address_en": "Адрес (EN)",
+        "address_ru": "Адрес (RU)",
+        "address_tk": "Адрес (TK)",
+        "map_coordinates": "Координаты на карте",
     }
     column_formatters = {
         "name_i18n": lambda v, c, m, p: _get_i18n_attr(m, "name"),
@@ -299,8 +360,17 @@ class CompanyAdmin(SecureModelView):
 class ProductCategoryAdmin(SecureModelView):
     column_list = ("name_i18n", "slug", "parent_i18n")
     column_labels = {
-        "name_i18n": _l("Categories"),
-        "parent_i18n": _l("Categories"),
+        "name_i18n": "Категории",
+        "name_en": "Название (EN)",
+        "name_ru": "Название (RU)",
+        "name_tk": "Название (TK)",
+        "slug": "Адрес страницы",
+        "description_en": "Описание (EN)",
+        "description_ru": "Описание (RU)",
+        "description_tk": "Описание (TK)",
+        "image": "Изображение категории",
+        "parent_i18n": "Родительская категория",
+        "parent": "Родительская категория",
     }
     column_formatters = {
         "name_i18n": lambda v, c, m, p: _get_i18n_attr(m, "name"),
@@ -338,12 +408,32 @@ class ProductCategoryAdmin(SecureModelView):
 # -----------------------------
 class ContactMessageAdmin(SecureModelView):
     column_list = ("name", "email", "submission_date")
-    form_columns = [
-        "name", "email", "message", "submission_date"
-    ]
-    form_overrides = {
-        "message": TextAreaField,
+    column_labels = {
+        "name": "Имя",
+        "email": "Email",
+        "message": "Сообщение",
+        "submission_date": "Дата отправки",
     }
+
+# Enhanced view with labels for better UX
+class NewsletterSubscriberAdmin(SecureModelView):
+    column_list = ("email", "subscription_date")
+    column_labels = {
+        "email": "Email",
+        "subscription_date": "Дата подписки",
+    }
+    form_columns = ["email", "subscription_date"]
+    edit_template = "admin/model/edit.html"
+    create_template = "admin/model/create.html"
+
+class AdminUserAdmin(SecureModelView):
+    column_list = ("id", "username")
+    column_labels = {
+        "id": "ID",
+        "username": "Имя пользователя",
+        "password_hash": "Пароль",
+    }
+    form_columns = ["username", "password_hash"]
     edit_template = "admin/model/edit.html"
     create_template = "admin/model/create.html"
 
@@ -353,21 +443,21 @@ class ContactMessageAdmin(SecureModelView):
 def create_admin(app):
     admin = Admin(
         app,
-        name=_l("Dashboard"),
+        name="Панель управления",
         template_mode="bootstrap4",
         index_view=MyAdminIndexView()
     )
 
-    admin.add_view(CompanyAdmin(Company, db.session, name=_l("Companies"), menu_icon_type="fa", menu_icon_value="fa fa-building"))
-    admin.add_view(ProductAdmin(Product, db.session, name=_l("Products"), menu_icon_type="fa", menu_icon_value="fa fa-box"))
-    admin.add_view(ProductCategoryAdmin(ProductCategory, db.session, name=_l("Categories"), menu_icon_type="fa", menu_icon_value="fa fa-list"))
-    admin.add_view(BrandAdmin(Brand, db.session, name=_l("Brands"), menu_icon_type="fa", menu_icon_value="fa fa-tag"))
-    admin.add_view(NewsAdmin(News, db.session, name=_l("News"), menu_icon_type="fa", menu_icon_value="fa fa-newspaper"))
-    admin.add_view(CertificateAdmin(Certificate, db.session, name=_l("Certificates"), menu_icon_type="fa", menu_icon_value="fa fa-certificate"))
-    admin.add_view(BannerAdmin(Banner, db.session, name=_l("Banners"), menu_icon_type="fa", menu_icon_value="fa fa-image"))
-    admin.add_view(ContactMessageAdmin(ContactMessage, db.session, name=_l("Messages"), menu_icon_type="fa", menu_icon_value="fa fa-envelope"))
-    admin.add_view(SecureModelView(NewsletterSubscriber, db.session, name=_l("Subscribers"), menu_icon_type="fa", menu_icon_value="fa fa-users"))
-    admin.add_view(SecureModelView(AdminUser, db.session, name=_l("Users"), menu_icon_type="fa", menu_icon_value="fa fa-user-shield"))
+    admin.add_view(CompanyAdmin(Company, db.session, name="Компании", menu_icon_type="fa", menu_icon_value="fa fa-building"))
+    admin.add_view(ProductAdmin(Product, db.session, name="Товары", menu_icon_type="fa", menu_icon_value="fa fa-box"))
+    admin.add_view(ProductCategoryAdmin(ProductCategory, db.session, name="Категории", menu_icon_type="fa", menu_icon_value="fa fa-list"))
+    admin.add_view(BrandAdmin(Brand, db.session, name="Бренды", menu_icon_type="fa", menu_icon_value="fa fa-tag"))
+    admin.add_view(NewsAdmin(News, db.session, name="Новости", menu_icon_type="fa", menu_icon_value="fa fa-newspaper"))
+    admin.add_view(CertificateAdmin(Certificate, db.session, name="Сертификаты", menu_icon_type="fa", menu_icon_value="fa fa-certificate"))
+    admin.add_view(BannerAdmin(Banner, db.session, name="Баннеры", menu_icon_type="fa", menu_icon_value="fa fa-image"))
+    admin.add_view(ContactMessageAdmin(ContactMessage, db.session, name="Сообщения", menu_icon_type="fa", menu_icon_value="fa fa-envelope"))
+    admin.add_view(NewsletterSubscriberAdmin(NewsletterSubscriber, db.session, name="Подписчики", menu_icon_type="fa", menu_icon_value="fa fa-users"))
+    admin.add_view(AdminUserAdmin(AdminUser, db.session, name="Пользователи", menu_icon_type="fa", menu_icon_value="fa fa-user-shield"))
 
     return admin
 

@@ -3,17 +3,171 @@
 {% block tail %}
     {{ super() }}
     <script src="https://cdn.jsdelivr.net/npm/tinymce@6.8.3/tinymce.min.js" referrerpolicy="origin"></script>
+    <style>
+        /* Modern Form Styling */
+        .form-group label {
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 0.75rem;
+            display: block;
+            font-size: 0.95rem;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select,
+        .form-control {
+            width: 100%;
+            padding: 0.85rem 1rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            font-family: inherit;
+            margin-bottom: 0.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus,
+        .form-control:focus {
+            outline: none;
+            border-color: #2E6CF7;
+            box-shadow: 0 0 0 3px rgba(46, 108, 247, 0.1);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 140px;
+        }
+
+        /* Field groups */
+        .form-section {
+            margin-bottom: 2.5rem;
+            padding-bottom: 2rem;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .form-section:last-child {
+            border-bottom: none;
+        }
+
+        .form-section h3 {
+            font-size: 1.15rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(90deg, #2E6CF7 0%, #4D96FF 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Language tabs */
+        .lang-tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+            border-bottom: 2px solid #e0e0e0;
+            flex-wrap: wrap;
+        }
+
+        .lang-tab {
+            padding: 0.75rem 1.5rem;
+            border: 2px solid transparent;
+            background: #f8f9fa;
+            cursor: pointer;
+            font-size: 0.9rem;
+            color: #666;
+            border-radius: 6px 6px 0 0;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .lang-tab.active {
+            color: #fff;
+            background: linear-gradient(90deg, #2E6CF7 0%, #4D96FF 100%);
+            border-color: #2E6CF7;
+        }
+
+        .lang-tab:hover:not(.active) {
+            color: #2E6CF7;
+            background: #e9ecef;
+        }
+
+        /* Buttons */
+        .form-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2.5rem;
+            padding-top: 2rem;
+            border-top: 2px solid #e0e0e0;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 0.85rem 1.75rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(90deg, #2E6CF7 0%, #4D96FF 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(46, 108, 247, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(46, 108, 247, 0.4);
+        }
+
+        .btn-secondary {
+            background: #e0e0e0;
+            color: #333;
+            border: 2px solid #ccc;
+        }
+
+        .btn-secondary:hover {
+            background: #d0d0d0;
+        }
+
+        /* Image preview */
+        .image-preview {
+            max-width: 250px;
+            margin-top: 1rem;
+            border-radius: 8px;
+            border: 2px solid #e0e0e0;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Required field indicator */
+        .required::after {
+            content: '*';
+            color: #FF6B6B;
+            margin-left: 0.25rem;
+            font-weight: 700;
+        }
+    </style>
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             tinymce.init({
-                selector: "textarea",
+                selector: "textarea:not(.no-editor)",
                 language: "ru",
-                height: 300,
+                height: 350,
                 menubar: false,
                 plugins: "advlist autolink lists link image charmap preview anchor searchreplace visualblocks code fullscreen insertdatetime media table code help wordcount",
                 toolbar: "undo redo | blocks | bold italic underline forecolor backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image table | removeformat | code",
                 branding: false,
-                convert_urls: false
+                convert_urls: false,
+                skin: 'oxide',
+                content_css: 'default'
             });
         });
     </script>
