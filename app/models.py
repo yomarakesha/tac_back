@@ -73,6 +73,8 @@ class Certificate(db.Model):
 
 # Торговые марки
 class Brand(db.Model):
+    def __str__(self):
+        return self.name_ru or self.name_en or self.name_tk or f"Brand #{self.id}"
     def to_dict(self, absolute_url_func=None):
         logo_url = absolute_url_func(self.logo_image) if absolute_url_func else self.logo_image
         return {
@@ -108,6 +110,8 @@ class Brand(db.Model):
 
 # Категории товаров
 class ProductCategory(db.Model):
+    def __str__(self):
+        return self.name_ru or self.name_en or self.name_tk or f"Category #{self.id}"
     def to_dict(self, absolute_url_func=None):
         image_url = absolute_url_func(self.image) if absolute_url_func else self.image
         return {
