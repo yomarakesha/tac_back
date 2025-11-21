@@ -30,6 +30,32 @@ class SecureModelView(ModelView):
 # -----------------------------
 # Admin Dashboard
 # -----------------------------
+
+# -----------------------------
+# AutoSlugAdminMixin: hides slug from the form and ensures slug is generated if missing
+# -----------------------------
+class AutoSlugAdminMixin:
+    # безопасно получаем form_excluded_columns, чтобы не было ошибки ObsoleteAttr
+    _excluded = getattr(SecureModelView, "form_excluded_columns", [])
+    if type(_excluded).__name__ == "ObsoleteAttr":
+        _excluded = []
+
+    # скрываем поле slug из формы
+    form_excluded_columns = _excluded + ["slug"]
+
+    def on_model_change(self, form, model, is_created):
+        """
+        Если slug пустой, генерируем его автоматически через модель.
+        """
+        try:
+            if not getattr(model, "slug", None) and hasattr(model, "generate_slug_from_name"):
+                model.generate_slug_from_name(session=db.session)
+        except Exception:
+            # логировать ошибку можно здесь
+            pass
+        return super().on_model_change(form, model, is_created)
+
+
 class MyAdminIndexView(AdminIndexView):
     # Подключаем те же файлы стилей, что и у SecureModelView, чтобы дашборд и страницы списка совпадали
     extra_css = ["/static/css/admin-new.css", "/static/css/admin.css"]
@@ -79,7 +105,7 @@ CREATE_TEMPLATE = "admin/create.html"
 # -----------------------------
 # Product Admin
 # -----------------------------
-class ProductAdmin(SecureModelView):
+class ProductAdmin(AutoSlugAdminMixin, SecureModelView):
    
     column_list = (
         "name_i18n", "slug", "brand_i18n", "category_i18n", "volume_or_weight",
@@ -111,7 +137,7 @@ class ProductAdmin(SecureModelView):
     }
     form_columns = [
         "name_en", "name_ru", "name_tk",
-        "slug",
+        
         "description_en", "description_ru", "description_tk",
         "volume_or_weight", "image", "additional_images",
         "packaging_details_en", "packaging_details_ru", "packaging_details_tk",
@@ -147,7 +173,7 @@ class ProductAdmin(SecureModelView):
 # -----------------------------
 # Brand Admin
 # -----------------------------
-class BrandAdmin(SecureModelView):
+class BrandAdmin(AutoSlugAdminMixin, SecureModelView):
     column_list = ("name_i18n", "slug", "company_i18n")
     column_labels = {
         "name_i18n": "Бренды",
@@ -172,7 +198,7 @@ class BrandAdmin(SecureModelView):
     form_columns = [
         "name_en", "name_ru", "name_tk",
         "subtitle_en", "subtitle_ru", "subtitle_tk",
-        "slug",
+        
         "description_en", "description_ru", "description_tk",
         "logo_image", "company"
     ]
@@ -201,7 +227,7 @@ class BrandAdmin(SecureModelView):
 # -----------------------------
 # News Admin
 # -----------------------------
-class NewsAdmin(SecureModelView):
+class NewsAdmin(AutoSlugAdminMixin, SecureModelView):
     column_list = ("title_i18n", "slug", "publication_date", "company_i18n")
     column_labels = {
         "title_i18n": "Новости",
@@ -228,7 +254,7 @@ class NewsAdmin(SecureModelView):
     form_columns = [
         "title_en", "title_ru", "title_tk",
         "subtitle_en", "subtitle_ru", "subtitle_tk",
-        "slug",
+        
         "body_text_en", "body_text_ru", "body_text_tk",
         "publication_date", "reading_minutes", "image", "company"
     ]
@@ -256,14 +282,14 @@ class NewsAdmin(SecureModelView):
 # -----------------------------
 # Certificate Admin
 # -----------------------------
-class CertificateAdmin(SecureModelView):
+class CertificateAdmin(AutoSlugAdminMixin, SecureModelView):
     column_list = ("id", "slug", "image")
     column_labels = {
         "id": "ID",
         "image": "Изображение сертификата",
         "slug": "Адрес страницы",
     }
-    form_columns = ["slug", "image"]
+    form_columns = [ "image"]
     edit_template = "admin/model/edit.html"
     create_template = "admin/model/create.html"
     form_extra_fields = {
@@ -283,7 +309,7 @@ class CertificateAdmin(SecureModelView):
 # -----------------------------
 # Banner Admin
 # -----------------------------
-class BannerAdmin(SecureModelView):
+class BannerAdmin(AutoSlugAdminMixin, SecureModelView):
     column_list = ("id", "slug", "image", "link")
     column_labels = {
         "id": "ID",
@@ -291,7 +317,7 @@ class BannerAdmin(SecureModelView):
         "link": "Ссылка",
         "slug": "Адрес страницы",
     }
-    form_columns = ["slug", "image", "link"]
+    form_columns = [ "image", "link"]
     edit_template = "admin/model/edit.html"
     create_template = "admin/model/create.html"
     form_extra_fields = {
@@ -357,7 +383,7 @@ class CompanyAdmin(SecureModelView):
 # -----------------------------
 # ProductCategory Admin
 # -----------------------------
-class ProductCategoryAdmin(SecureModelView):
+class ProductCategoryAdmin(AutoSlugAdminMixin, SecureModelView):
     column_list = ("name_i18n", "slug", "parent_i18n")
     column_labels = {
         "name_i18n": "Категории",
@@ -378,7 +404,7 @@ class ProductCategoryAdmin(SecureModelView):
     }
     form_columns = [
         "name_en", "name_ru", "name_tk",
-        "slug",
+        
         "description_en", "description_ru", "description_tk",
         "image", "parent"
     ]
